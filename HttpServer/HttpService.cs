@@ -44,6 +44,8 @@ namespace HttpServer
             catch (FileNotFoundException)
             {
                 writer.WriteLine("HTTP/1.0 404 Not Found");
+                writer.WriteLine("");
+                writer.WriteLine("Page not found");
                 client.Close();//TODO: in finally
                 return;
             }

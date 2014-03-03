@@ -35,7 +35,19 @@ namespace HttpServer
 
             StreamWriter writer = new StreamWriter(stream);
             writer.AutoFlush = true;
-            string filename = GetFile(lines[0]);
+
+            string filename;
+            try
+            {
+                filename = GetFile(lines[0]);
+            }
+            catch (ArgumentException)
+            {
+                writer.WriteLine("HTTP/1.0 400 Illegal request");
+                client.Close();
+                return;
+            }
+
             FileStream fileStream;
             try
             {
@@ -73,16 +85,35 @@ namespace HttpServer
 
         private string GetFile(string request)
         {
+            //TODO: new exception classes
             if (String.IsNullOrEmpty(request))
                 throw new ArgumentException();
             string[] requestWords = request.Split(' ');
-            if (!requestWords[0].Equals("GET"))
-            {
-                throw (new ArgumentException("Only GET requests are supported", "request"));
-            }
-            string pathToFile = requestWords[1];
-            return RootCatalog + pathToFile;
-        }
+            if (requestWords.Length != 3)
+                throw new ArgumentException();
 
+            string method = requestWords[0];
+            string filename = requestWords[1];
+            string protocol = requestWords[2];
+
+            if (!method.Equals("GET"))
+            {
+                throw new ArgumentException("Only GET requests are supported", "request");
+            }
+
+            string[] protocolWords = protocol.Split('/');
+            if (protocolWords.Length != 2)
+                throw new ArgumentException();
+            if (!protocolWords[0].Equals("HTTP"))
+                throw new ArgumentException();
+
+            //TODO: check "HTTP/text"
+            decimal protocolVersion = decimal.Parse(protocolWords[1]);
+            Console.WriteLine("Version:");
+            Console.WriteLine(protocolVersion);
+            if (protocolVersion < 1)
+                throw new Exception();
+            return RootCatalog + filename;
+        }
     }
 }

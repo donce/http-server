@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace HttpServer
 {
-    class Server
+    public class Server
     {
         public const int DefaultPort = 8080;
         static void Main(string[] args)

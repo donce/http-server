@@ -42,9 +42,11 @@ namespace HttpServer
             }
         }
 
-        public string GetFile(string getRequest)
+        public static string GetFile(string getRequest)
         {
-            return "index.html";
+            string pathToFile = getRequest.Split(' ')[1];
+            return pathToFile;
+//            return "index.html";
         }
     }
 }

@@ -24,14 +24,14 @@ namespace HttpServer
             Console.WriteLine("Client connected");
             Stream stream = client.GetStream();
             StreamReader reader = new StreamReader(stream);
-            StreamWriter writer = new StreamWriter(stream);
 
             string line = reader.ReadLine();
-            //                while (line != null)
-            //                {
-            Console.WriteLine(line);
-            //                    line = reader.ReadLine();
-            //                }
+//            while (!reader.EndOfStream)
+//            {
+                Console.WriteLine("a:" + line);
+//                line = reader.ReadLine();
+//            }
+            StreamWriter writer = new StreamWriter(stream);
 
             string filename = GetFile(line);
 
@@ -45,16 +45,15 @@ namespace HttpServer
             client.Close();//TODO: in finally
         }
 
-        public string GetFile(string getRequest)
+        private string GetFile(string request)
         {
-            string[] requestWords = getRequest.Split(' ');
+            string[] requestWords = request.Split(' ');
             if (!requestWords[0].Equals("GET"))
             {
-                throw (new ArgumentException("Only GET requests are supported"));
+                throw (new ArgumentException("Only GET requests are supported", "request"));
             }
             string pathToFile = requestWords[1];
             return pathToFile;
-            //            return "index.html";
         }
 
     }

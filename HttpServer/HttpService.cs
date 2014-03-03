@@ -74,8 +74,12 @@ namespace HttpServer
             FileStream fileStream;
             try
             {
-                //TODO: Illegal charecters in path exception
                 fileStream = new FileStream(filename, FileMode.Open);
+            }
+            catch (ArgumentException)
+            {
+                Write404();
+                return;
             }
             catch (FileNotFoundException)
             {

@@ -30,8 +30,9 @@ namespace HttpServer
 //                    line = reader.ReadLine();
 //                }
 
+                string filename = GetFile(line);
 
-                string content = "Hello world!";
+                string content = "You've requested " + filename;
                 writer.WriteLine("HTTP/1.0 200 OK");
                 writer.WriteLine("");
                 writer.WriteLine(content);
@@ -42,7 +43,7 @@ namespace HttpServer
             }
         }
 
-        public string GetFile(string getRequest)
+        public static string GetFile(string getRequest)
         {
             return "index.html";
         }

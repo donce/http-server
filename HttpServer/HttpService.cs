@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
 
@@ -21,17 +23,19 @@ namespace HttpServer
         {
             Console.WriteLine("Client connected");
             Stream stream = client.GetStream();
-            StreamReader reader = new StreamReader(stream);
 
-            string line = reader.ReadLine();
-//            while (!reader.EndOfStream)
-//            {
-                Console.WriteLine("a:" + line);
-//                line = reader.ReadLine();
-//            }
+            String[] lines = ReadRequest(stream);
+            if (lines.Length == 0)
+                throw new Exception();
+
+            foreach (string line in lines)
+            {
+                Console.WriteLine(line);
+            }
+
             StreamWriter writer = new StreamWriter(stream);
             writer.AutoFlush = true;
-            string filename = GetFile(line);
+            string filename = GetFile(lines[0]);
             FileStream fileStream;
             try
             {
@@ -50,6 +54,19 @@ namespace HttpServer
             fileStream.Close();
 
             client.Close();//TODO: in finally
+        }
+
+        private string[] ReadRequest(Stream stream)
+        {
+            StreamReader reader = new StreamReader(stream);
+            List<string> lines = new List<string>();
+            string line = reader.ReadLine();
+            while (!String.IsNullOrEmpty(line))
+            {
+                lines.Add(line);
+                line = reader.ReadLine();
+            }
+            return lines.ToArray();
         }
 
         private string GetFile(string request)

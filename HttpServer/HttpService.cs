@@ -91,7 +91,6 @@ namespace HttpServer
             writer.WriteLine("HTTP/1.0 200 OK");
             AddProperty("Content-Type", GetContentType(filename));
             writer.WriteLine("");
-            writer.Flush();
             fileStream.CopyTo(stream);
             fileStream.Close();
 

@@ -41,5 +41,10 @@ namespace HttpServer
                 client.Close();//TODO: in finally
             }
         }
+
+        public string GetFile(string getRequest)
+        {
+            return "index.html";
+        }
     }
 }

@@ -46,66 +46,70 @@ namespace HttpServer
 
         public void Process()
         {
-            Console.WriteLine("Client connected");
-
-            String[] lines = ReadRequest();
-            if (lines.Length == 0)
-            {
-                Write400();
-                return;
-            }
-            Console.WriteLine(lines.Length);
-            foreach (string line in lines)
-            {
-                Console.WriteLine(line);
-            }
-
-            HttpRequest request;
             try
             {
-                request = new HttpRequest(lines[0]);
+                Console.WriteLine("Client connected");
+
+                String[] lines = ReadRequest();
+                if (lines.Length == 0)
+                {
+                    Write400();
+                    return;
+                }
+                foreach (string line in lines)
+                {
+                    Console.WriteLine(line);
+                }
+
+                HttpRequest request;
+                try
+                {
+                    request = new HttpRequest(lines[0]);
+                }
+                catch (ArgumentException)
+                {
+                    Write400();
+                    return;
+                }
+
+                string filename = RootCatalog + request.Filename;
+
+                FileStream fileStream;
+
+                long contentLength;
+
+                try
+                {
+                    //TODO: Illegal charecters in path exception
+                    fileStream = new FileStream(filename, FileMode.Open);
+                    FileInfo info = new FileInfo(filename);
+                    contentLength = info.Length;
+                }
+                catch (FileNotFoundException)
+                {
+                    Write404();
+                    return;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    Write404();
+                    return;
+                }
+
+
+                WriteResponse(200, "OK");
+                AddProperty("Content-Type", GetContentType(filename));
+                AddProperty("Content-Length", contentLength);
+                AddProperty("Server", "Best HTTP server ever.");
+                writer.WriteLine("");
+                writer.Flush();
+                fileStream.CopyTo(stream);
+                fileStream.Close();
             }
-            catch (ArgumentException)
+            finally
             {
-                Write400();
-                return;
+                client.Close();
             }
-
-            string filename = RootCatalog + request.Filename;
-
-            FileStream fileStream;
-
-            long contentLength;
-
-            try
-            {
-                //TODO: Illegal charecters in path exception
-                fileStream = new FileStream(filename, FileMode.Open);
-                FileInfo info = new FileInfo(filename);
-                contentLength = info.Length;
-            }
-            catch (FileNotFoundException)
-            {
-                Write404();
-                return;
-            }
-            catch (DirectoryNotFoundException)
-            {
-                Write404();
-                return;
-            }
-
-
-            WriteResponse(200, "OK");
-            AddProperty("Content-Type", GetContentType(filename));
-            AddProperty("Content-Length", contentLength);
-            AddProperty("Server", "Best HTTP server ever.");
-            writer.WriteLine("");
-            writer.Flush();
-            fileStream.CopyTo(stream);
-            fileStream.Close();
-
-            client.Close();//TODO: in finally
         }
 
         private string[] ReadRequest()
@@ -147,7 +151,6 @@ namespace HttpServer
         private void Write400()
         {
             WriteResponse(400, "Illegal request");
-            client.Close();
         }
 
         private void Write404()
@@ -156,7 +159,6 @@ namespace HttpServer
             writer.WriteLine("");
             writer.WriteLine("Page not found");
             writer.Flush();
-            client.Close(); //TODO: in finally
         }
     }
 }

@@ -8,12 +8,14 @@ using System.Threading.Tasks;
 
 namespace HttpServer
 {
-    class HttpService
+    public class HttpService
     {
         private TcpClient client;
 
         public HttpService(TcpClient client)
         {
+            if (client == null)
+                throw new ArgumentNullException("client");
             this.client = client;
         }
 

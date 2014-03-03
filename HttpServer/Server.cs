@@ -45,7 +45,12 @@ namespace HttpServer
 
         public static string GetFile(string getRequest)
         {
-            string pathToFile = getRequest.Split(' ')[1];
+            string[] requestWords = getRequest.Split(' ');
+            if (!requestWords[0].Equals("GET"))
+            {
+                throw (new ArgumentException("Only GET requests are supported"));
+            }
+            string pathToFile = requestWords[1];
             return pathToFile;
 //            return "index.html";
         }

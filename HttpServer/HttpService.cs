@@ -12,6 +12,7 @@ namespace HttpServer
 
         private TcpClient client;
 
+        private Stream stream;
         private StreamReader reader;
         private StreamWriter writer;
 
@@ -38,7 +39,7 @@ namespace HttpServer
             if (client == null)
                 throw new ArgumentNullException("client");
             this.client = client;
-            Stream stream = client.GetStream();
+            stream = client.GetStream();
             reader = new StreamReader(stream);
             writer = new StreamWriter(stream);
         }
@@ -46,12 +47,14 @@ namespace HttpServer
         public void Process()
         {
             Console.WriteLine("Client connected");
-            Stream stream = client.GetStream();
 
             String[] lines = ReadRequest();
             if (lines.Length == 0)
-                throw new Exception();
-
+            {
+                Write400();
+                return;
+            }
+            Console.WriteLine(lines.Length);
             foreach (string line in lines)
             {
                 Console.WriteLine(line);
@@ -64,18 +67,22 @@ namespace HttpServer
             }
             catch (ArgumentException)
             {
-                writer.WriteLine("HTTP/1.0 400 Illegal request");
-                client.Close();
+                Write400();
                 return;
             }
 
             string filename = RootCatalog + request.Filename;
 
             FileStream fileStream;
+
+            long contentLength;
+
             try
             {
                 //TODO: Illegal charecters in path exception
                 fileStream = new FileStream(filename, FileMode.Open);
+                FileInfo info = new FileInfo(filename);
+                contentLength = info.Length;
             }
             catch (FileNotFoundException)
             {
@@ -88,9 +95,13 @@ namespace HttpServer
                 return;
             }
 
-            writer.WriteLine("HTTP/1.0 200 OK");
+
+            WriteResponse(200, "OK");
             AddProperty("Content-Type", GetContentType(filename));
+            AddProperty("Content-Length", contentLength);
+            AddProperty("Server", "Best HTTP server ever.");
             writer.WriteLine("");
+            writer.Flush();
             fileStream.CopyTo(stream);
             fileStream.Close();
 
@@ -119,18 +130,29 @@ namespace HttpServer
             return defaultContentType;
         }
 
-        private void AddProperty(string key, string value)
+        private void AddProperty(string key, Object value)
         {
             if (String.IsNullOrEmpty(key))
                 throw new ArgumentException("Null or empty", "key");
-            if (String.IsNullOrEmpty(value))
+            if (String.IsNullOrEmpty(value.ToString()))
                 throw new ArgumentException("Null or empty", "value");
-            writer.Write(key + ": " + value);
+            writer.WriteLine(key + ": " + value);
+        }
+
+        private void WriteResponse(int status, string message)
+        {
+            writer.WriteLine("HTTP/1.0 " + status.ToString() + " " + message);
+        }
+
+        private void Write400()
+        {
+            WriteResponse(400, "Illegal request");
+            client.Close();
         }
 
         private void Write404()
         {
-            writer.WriteLine("HTTP/1.0 404 Not Found");
+            WriteResponse(404, "Not Found");
             writer.WriteLine("");
             writer.WriteLine("Page not found");
             writer.Flush();

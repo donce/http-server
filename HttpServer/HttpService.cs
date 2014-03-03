@@ -74,20 +74,24 @@ namespace HttpServer
             FileStream fileStream;
             try
             {
+                //TODO: Illegal charecters in path exception
                 fileStream = new FileStream(filename, FileMode.Open);
             }
             catch (FileNotFoundException)
             {
-                writer.WriteLine("HTTP/1.0 404 Not Found");
-                writer.WriteLine("");
-                writer.WriteLine("Page not found");
-                client.Close();//TODO: in finally
+                Write404();
+                return;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                Write404();
                 return;
             }
 
             writer.WriteLine("HTTP/1.0 200 OK");
             AddProperty("Content-Type", GetContentType(filename));
             writer.WriteLine("");
+            writer.Flush();
             fileStream.CopyTo(stream);
             fileStream.Close();
 
@@ -123,6 +127,15 @@ namespace HttpServer
             if (String.IsNullOrEmpty(value))
                 throw new ArgumentException("Null or empty", "value");
             writer.Write(key + ": " + value);
+        }
+
+        private void Write404()
+        {
+            writer.WriteLine("HTTP/1.0 404 Not Found");
+            writer.WriteLine("");
+            writer.WriteLine("Page not found");
+            writer.Flush();
+            client.Close(); //TODO: in finally
         }
     }
 }

@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HttpServer
 {
     public class HttpService
     {
+        private static readonly string RootCatalog = "c:/www";
+
         private TcpClient client;
 
         public HttpService(TcpClient client)
@@ -32,28 +30,39 @@ namespace HttpServer
 //                line = reader.ReadLine();
 //            }
             StreamWriter writer = new StreamWriter(stream);
-
+            writer.AutoFlush = true;
             string filename = GetFile(line);
+            FileStream fileStream;
+            try
+            {
+                fileStream = new FileStream(filename, FileMode.Open);
+            }
+            catch (FileNotFoundException)
+            {
+                writer.WriteLine("HTTP/1.0 404 Not Found");
+                client.Close();//TODO: in finally
+                return;
+            }
 
-            string content = "You've requested " + filename;
             writer.WriteLine("HTTP/1.0 200 OK");
             writer.WriteLine("");
-            writer.WriteLine(content);
-
-            writer.Flush();
+            fileStream.CopyTo(stream);
+            fileStream.Close();
 
             client.Close();//TODO: in finally
         }
 
         private string GetFile(string request)
         {
+            if (String.IsNullOrEmpty(request))
+                throw new ArgumentException();
             string[] requestWords = request.Split(' ');
             if (!requestWords[0].Equals("GET"))
             {
                 throw (new ArgumentException("Only GET requests are supported", "request"));
             }
             string pathToFile = requestWords[1];
-            return pathToFile;
+            return RootCatalog + pathToFile;
         }
 
     }

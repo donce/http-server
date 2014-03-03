@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HttpServer
 {
@@ -28,21 +24,28 @@ namespace HttpServer
 
             if (!Method.Equals("GET"))//TODO: use enum
             {
-                throw new ArgumentException("Only GET requests are supported", "line");
+                throw new MethodException("Only GET requests are supported", "Method");
             }
 
             string[] protocolWords = Protocol.Split('/');
             if (protocolWords.Length != 2)
-                throw new ArgumentException();
+                throw new ProtocolException("Invalid protocol format", "protocolWords");
             if (!protocolWords[0].Equals("HTTP"))
-                throw new ArgumentException();
+                throw new ProtocolException("Only HTTP is supported", "protocolWords[0]");
 
             //TODO: check "HTTP/text"
-            decimal protocolVersion = decimal.Parse(protocolWords[1]);
-            Console.WriteLine("Version:");
-            Console.WriteLine(protocolVersion);
-            if (protocolVersion < 1)
-                throw new Exception();
+            try
+            {
+                decimal protocolVersion = decimal.Parse(protocolWords[1]);
+                Console.WriteLine("Version:");
+                Console.WriteLine(protocolVersion);
+                if (protocolVersion < 1)
+                    throw new ProtocolException("Invalid HTTP version", "protocolVersion");
+            }
+            catch (FormatException)
+            {
+                throw new ProtocolException("Invalid version format", "protocolVersion");
+            }
         }
 
         public readonly string Method;

@@ -43,25 +43,4 @@ namespace HttpServer
             Parameter = parameter;
         }
     }
-
-    [Serializable]
-    public class FilenameException : Exception
-    {
-        public string Parameter { get; private set; }
-
-        public FilenameException()
-        {
-            //empty
-        }
-
-        public FilenameException(string message)
-        {
-            //empty
-        }
-
-        public FilenameException(string message, string parameter) : base(message)
-        {
-            Parameter = parameter;
-        }
-    }
 }

@@ -16,7 +16,6 @@ namespace HttpServer
             {
                 TcpClient client = listener.AcceptTcpClient();
                 HttpService service = new HttpService(client);
-//                service.Process();
                 Action action = new Action(service.Process);
                 Task.Run(action);
             }

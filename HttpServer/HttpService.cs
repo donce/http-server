@@ -139,13 +139,9 @@ namespace HttpServer
         {
             if (String.IsNullOrEmpty(filename))
                 throw new ArgumentException("Null or empty", "filename");
-            int position = filename.LastIndexOf('.');
-            if (position >= 0)
-            {
-                string extention = filename.Substring(position + 1);
-                if (contentTypes.ContainsKey(extention))
-                    return contentTypes[extention];
-            }
+            string extension = Path.GetExtension(filename).Substring(1);
+            if (contentTypes.ContainsKey(extension))
+                return contentTypes[extension];
             return defaultContentType;
         }
     }

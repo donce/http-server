@@ -80,10 +80,14 @@ namespace HttpServer
 
                 try
                 {
-                    //TODO: Illegal charecters in path exception
                     fileStream = new FileStream(filename, FileMode.Open);
                     FileInfo info = new FileInfo(filename);
                     contentLength = info.Length;
+            }
+            catch (ArgumentException)
+            {
+                Write404();
+                return;
                 }
                 catch (FileNotFoundException)
                 {

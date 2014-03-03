@@ -86,7 +86,7 @@ namespace HttpServer
             }
 
             writer.WriteLine("HTTP/1.0 200 OK");
-            writer.WriteLine("Content-Type: " + GetContentType(filename));
+            AddProperty("Content-Type", GetContentType(filename));
             writer.WriteLine("");
             fileStream.CopyTo(stream);
             fileStream.Close();
@@ -114,6 +114,15 @@ namespace HttpServer
             if (contentTypes.ContainsKey(extension))
                 return contentTypes[extension];
             return defaultContentType;
+        }
+
+        private void AddProperty(string key, string value)
+        {
+            if (String.IsNullOrEmpty(key))
+                throw new ArgumentException("Null or empty", "key");
+            if (String.IsNullOrEmpty(value))
+                throw new ArgumentException("Null or empty", "value");
+            writer.Write(key + ": " + value);
         }
     }
 }

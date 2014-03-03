@@ -12,6 +12,24 @@ namespace HttpServer
 
         private TcpClient client;
 
+        private static readonly IDictionary<string, string> contentTypes;
+        private const string defaultContentType = "application/octet-stream";
+
+        static HttpService()
+        {
+            contentTypes = new Dictionary<string, string>();
+            contentTypes["html"] = "text/html";
+            contentTypes["htm"] = "text/html";
+            contentTypes["doc"] = "application/msword";
+            contentTypes["png"] = "image/png";
+            contentTypes["gif"] = "image/gif";
+            contentTypes["jpg"] = "image/jpeg";
+            contentTypes["pdf"] = "application/pdf";
+            contentTypes["css"] = "text/css";
+            contentTypes["xml"] = "text/xml";
+            contentTypes["jar"] = "application/x-java-archive";
+        }
+
         public HttpService(TcpClient client)
         {
             if (client == null)
@@ -63,6 +81,7 @@ namespace HttpServer
             }
 
             writer.WriteLine("HTTP/1.0 200 OK");
+            writer.WriteLine("Content-Type: " + GetContentType(filename));
             writer.WriteLine("");
             fileStream.CopyTo(stream);
             fileStream.Close();
@@ -114,6 +133,20 @@ namespace HttpServer
             if (protocolVersion < 1)
                 throw new Exception();
             return RootCatalog + filename;
+        }
+
+        private static string GetContentType(string filename)
+        {
+            if (String.IsNullOrEmpty(filename))
+                throw new ArgumentException("Null or empty", "filename");
+            int position = filename.LastIndexOf('.');
+            if (position >= 0)
+            {
+                string extention = filename.Substring(position + 1);
+                if (contentTypes.ContainsKey(extention))
+                    return contentTypes[extention];
+            }
+            return defaultContentType;
         }
     }
 }

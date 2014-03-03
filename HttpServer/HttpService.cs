@@ -12,11 +12,35 @@ namespace HttpServer
 
         private TcpClient client;
 
+        private StreamReader reader;
+        private StreamWriter writer;
+
+        private static readonly IDictionary<string, string> contentTypes;
+        private const string defaultContentType = "application/octet-stream";
+
+        static HttpService()
+        {
+            contentTypes = new Dictionary<string, string>();
+            contentTypes["html"] = "text/html";
+            contentTypes["htm"] = "text/html";
+            contentTypes["doc"] = "application/msword";
+            contentTypes["png"] = "image/png";
+            contentTypes["gif"] = "image/gif";
+            contentTypes["jpg"] = "image/jpeg";
+            contentTypes["pdf"] = "application/pdf";
+            contentTypes["css"] = "text/css";
+            contentTypes["xml"] = "text/xml";
+            contentTypes["jar"] = "application/x-java-archive";
+        }
+
         public HttpService(TcpClient client)
         {
             if (client == null)
                 throw new ArgumentNullException("client");
             this.client = client;
+            Stream stream = client.GetStream();
+            reader = new StreamReader(stream);
+            writer = new StreamWriter(stream);
         }
 
         public void Process()
@@ -24,7 +48,7 @@ namespace HttpServer
             Console.WriteLine("Client connected");
             Stream stream = client.GetStream();
 
-            String[] lines = ReadRequest(stream);
+            String[] lines = ReadRequest();
             if (lines.Length == 0)
                 throw new Exception();
 
@@ -33,13 +57,10 @@ namespace HttpServer
                 Console.WriteLine(line);
             }
 
-            StreamWriter writer = new StreamWriter(stream);
-            writer.AutoFlush = true;
-
-            string filename;
+            HttpRequest request;
             try
             {
-                filename = GetFile(lines[0]);
+                request = new HttpRequest(lines[0]);
             }
             catch (ArgumentException)
             {
@@ -47,6 +68,8 @@ namespace HttpServer
                 client.Close();
                 return;
             }
+
+            string filename = RootCatalog + request.Filename;
 
             FileStream fileStream;
             try
@@ -63,6 +86,7 @@ namespace HttpServer
             }
 
             writer.WriteLine("HTTP/1.0 200 OK");
+            writer.WriteLine("Content-Type: " + GetContentType(filename));
             writer.WriteLine("");
             fileStream.CopyTo(stream);
             fileStream.Close();
@@ -70,9 +94,8 @@ namespace HttpServer
             client.Close();//TODO: in finally
         }
 
-        private string[] ReadRequest(Stream stream)
+        private string[] ReadRequest()
         {
-            StreamReader reader = new StreamReader(stream);
             List<string> lines = new List<string>();
             string line = reader.ReadLine();
             while (!String.IsNullOrEmpty(line))
@@ -83,37 +106,14 @@ namespace HttpServer
             return lines.ToArray();
         }
 
-        private string GetFile(string request)
+        private static string GetContentType(string filename)
         {
-            //TODO: new exception classes
-            if (String.IsNullOrEmpty(request))
-                throw new ArgumentException();
-            string[] requestWords = request.Split(' ');
-            if (requestWords.Length != 3)
-                throw new ArgumentException();
-
-            string method = requestWords[0];
-            string filename = requestWords[1];
-            string protocol = requestWords[2];
-
-            if (!method.Equals("GET"))
-            {
-                throw new ArgumentException("Only GET requests are supported", "request");
-            }
-
-            string[] protocolWords = protocol.Split('/');
-            if (protocolWords.Length != 2)
-                throw new ArgumentException();
-            if (!protocolWords[0].Equals("HTTP"))
-                throw new ArgumentException();
-
-            //TODO: check "HTTP/text"
-            decimal protocolVersion = decimal.Parse(protocolWords[1]);
-            Console.WriteLine("Version:");
-            Console.WriteLine(protocolVersion);
-            if (protocolVersion < 1)
-                throw new Exception();
-            return RootCatalog + filename;
+            if (String.IsNullOrEmpty(filename))
+                throw new ArgumentException("Null or empty", "filename");
+            string extension = Path.GetExtension(filename).Substring(1);
+            if (contentTypes.ContainsKey(extension))
+                return contentTypes[extension];
+            return defaultContentType;
         }
     }
 }

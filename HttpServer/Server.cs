@@ -24,7 +24,6 @@ namespace HttpServer
                 TcpClient client = listener.AcceptTcpClient();
                 log.Info("New client accepted");
                 HttpService service = new HttpService(client);
-//                service.Process();
                 Action action = new Action(service.Process);
                 log.Info("Sending reponse to client");
                 Task.Run(action);

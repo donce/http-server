@@ -50,7 +50,7 @@ namespace HttpServerUnitTests
             Assert.AreEqual("HTTP/1.0 400 Illegal request", line);
         }
 
-//        [TestMethod]
+        [TestMethod]
         public void TestGetIllegalProtocol()
         {
             String line = GetFirstLine("GET /file.txt HTTP/1.2");
@@ -63,7 +63,6 @@ namespace HttpServerUnitTests
             String line = GetFirstLine("POST /file.txt HTTP/1.0");
             Assert.AreEqual("HTTP/1.0 200 xxx", line);
         }
-
 
         private static String GetFirstLine(String request)
         {
@@ -81,7 +80,6 @@ namespace HttpServerUnitTests
             fromServer.Close();
             client.Close();
             return firstline;
-
         }
     }
 }

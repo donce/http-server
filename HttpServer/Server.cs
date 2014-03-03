@@ -21,6 +21,5 @@ namespace HttpServer
                 Task.Run(action);
             }
         }
-
     }
 }

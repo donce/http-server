@@ -1,9 +1,13 @@
 ﻿using System;
+using log4net;
+using log4net.Config;
 
 namespace HttpServer
 {
     class HttpRequest
     {
+
+        private static  readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
         public enum Methods
         {
             GET
@@ -11,7 +15,7 @@ namespace HttpServer
 
         public HttpRequest(string line)
         {
-            //TODO: new exception classes
+            log4net.Config.XmlConfigurator.Configure();
             if (String.IsNullOrEmpty(line))
                 throw new ArgumentException();
             string[] requestWords = line.Split(' ');
@@ -24,27 +28,37 @@ namespace HttpServer
 
             if (!Method.Equals("GET"))//TODO: use enum
             {
+                errorLog.Error("Only GET requests are supported");
                 throw new MethodException("Only GET requests are supported", "Method");
             }
 
             string[] protocolWords = Protocol.Split('/');
             if (protocolWords.Length != 2)
+            {
+                errorLog.Error("Invalid protocol format");
                 throw new ProtocolException("Invalid protocol format", "protocolWords");
+            }
             if (!protocolWords[0].Equals("HTTP"))
+            {
+                errorLog.Error("Only HTTP is supported");
                 throw new ProtocolException("Only HTTP is supported", "protocolWords[0]");
+            }
 
-            //TODO: check "HTTP/text"
             try
             {
                 decimal protocolVersion = decimal.Parse(protocolWords[1]);
                 Console.WriteLine("Version:");
                 Console.WriteLine(protocolVersion);
                 if (protocolVersion < 1)
+                {
+                    errorLog.Error("Invalid HTTP version");
                     throw new ProtocolException("Invalid HTTP version", "protocolVersion");
+                }
             }
             catch (FormatException)
             {
-                throw new ProtocolException("Invalid version format", "protocolVersion");
+                errorLog.Error("Invalid HTTP version format");
+                throw new ProtocolException("Invalid HTTP version format", "protocolVersion");
             }
         }
 

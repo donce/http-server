@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using log4net;
-using log4net.Config;
 
 namespace HttpServer
 {

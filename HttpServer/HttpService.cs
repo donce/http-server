@@ -40,67 +40,77 @@ namespace HttpServer
                 throw new ArgumentNullException("client");
             this.client = client;
             stream = client.GetStream();
-            writer = new StreamWriter(stream);
+//            writer = new StreamWriter(stream);
+        }
+
+        private HttpResponse GetResponse()
+        {
+            Console.WriteLine("Client connected");
+
+            ReadingRequest reading = new ReadingRequest(stream);
+            HttpRequest request;
+            try
+            {
+                request = reading.Read();
+//                    TODO:URL decoding
+//                    Console.WriteLine(DecodeUrlString(lines[0]));
+//                    request = new HttpRequest(DecodeUrlString(lines[0]));
+            }
+            catch (BadRequestException)
+            {
+                return new HttpResponse(400, "Illegal request");
+            }
+
+
+            string filename = RootCatalog + request.Filename;
+
+            FileStream fileStream;
+
+            long contentLength;
+
+            try
+            {
+                //TODO: using
+                fileStream = new FileStream(filename, FileMode.Open);
+                FileInfo info = new FileInfo(filename);
+                contentLength = info.Length;
+            }
+            catch (ArgumentException)
+            {
+                return new HttpResponse(404, "Not Found");
+            }
+            catch (FileNotFoundException)
+            {
+                return new HttpResponse(404, "Not Found");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return new HttpResponse(404, "Not Found");
+            }
+
+//                WriteResponse(200, "OK");
+            HttpResponse response = new HttpResponse(200, "OK");
+            response.AddProperty("Content-Type", GetContentType(filename));
+            response.AddProperty("Content-Length", contentLength);
+            response.AddProperty("Server", "BestServer.");
+
+            //TODO: close FileStream
+
+            response.Content = fileStream;
+            return response;
+//                response.Write(stream);
+//                writer.WriteLine("");
+//                writer.Flush();
+//                fileStream.CopyTo(stream);
+//                fileStream.Close();
         }
 
         public void Process()
         {
             try
             {
-                Console.WriteLine("Client connected");
-
-                ReadingRequest reading = new ReadingRequest(stream);
-                HttpRequest request;
-                try
-                {
-                    request = reading.Read();
-//TODO:URL decoding
-//                    Console.WriteLine(DecodeUrlString(lines[0]));
-//                    request = new HttpRequest(DecodeUrlString(lines[0]));
-                }
-                catch (BadRequestException)
-                {
-                    Write400();
-                    return;
-                }
-
-
-                string filename = RootCatalog + request.Filename;
-
-                FileStream fileStream;
-
-                long contentLength;
-
-                try
-                {
-                    fileStream = new FileStream(filename, FileMode.Open);
-                    FileInfo info = new FileInfo(filename);
-                    contentLength = info.Length;
-                }
-                catch (ArgumentException)
-                {
-                    Write404();
-                    return;
-                }
-                catch (FileNotFoundException)
-                {
-                    Write404();
-                    return;
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    Write404();
-                    return;
-                }
-
-                WriteResponse(200, "OK");
-                AddProperty("Content-Type", GetContentType(filename));
-                AddProperty("Content-Length", contentLength);
-                AddProperty("Server", "BestServer.");
-                writer.WriteLine("");
-                writer.Flush();
-                fileStream.CopyTo(stream);
-                fileStream.Close();
+                HttpResponse response = GetResponse();
+                response.Write(stream);
             }
             finally
             {
@@ -116,33 +126,6 @@ namespace HttpServer
             if (contentTypes.ContainsKey(extension))
                 return contentTypes[extension];
             return defaultContentType;
-        }
-
-        private void AddProperty(string key, Object value)
-        {
-            if (String.IsNullOrEmpty(key))
-                throw new ArgumentException("Null or empty", "key");
-            if (String.IsNullOrEmpty(value.ToString()))
-                throw new ArgumentException("Null or empty", "value");
-            writer.WriteLine(key + ": " + value);
-        }
-
-        private void WriteResponse(int status, string message)
-        {
-            writer.WriteLine("HTTP/1.0 " + status.ToString() + " " + message);
-        }
-
-        private void Write400()
-        {
-            WriteResponse(400, "Illegal request");
-        }
-
-        private void Write404()
-        {
-            WriteResponse(404, "Not Found");
-            writer.WriteLine("");
-            writer.WriteLine("Page not found");
-            writer.Flush();
         }
 
         private static string DecodeUrlString(string url)

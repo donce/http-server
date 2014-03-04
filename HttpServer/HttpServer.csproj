@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="HandlingRequest.cs" />
     <Compile Include="HttpRequest.cs" />
+    <Compile Include="HttpResponse.cs" />
     <Compile Include="HttpService.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="ReadingRequest.cs" />

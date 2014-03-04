@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace HttpServer
 {
-    class Configuration
+    public class Configuration
     {
         public readonly string RootPath;
 

@@ -8,8 +8,6 @@ namespace HttpServer
 {
     public class HttpService
     {
-        public static readonly string RootCatalog = "c:/www";
-
         private TcpClient client;
 
         private Stream stream;

@@ -33,8 +33,8 @@ namespace HttpServer
 
         public static HttpResponse ProcessRequest(HttpRequest request)
         {
-            string filePath = HttpService.RootCatalog + request.Filename;
-            string indexPath = HttpService.RootCatalog + "/index.html";
+            string filePath = ServerClass.Configuration.RootPath + request.Filename;
+            string indexPath = ServerClass.Configuration.RootPath + "/index.html";
             FileAttributes attr;
             FileStream fileStream;
             long contentLength;

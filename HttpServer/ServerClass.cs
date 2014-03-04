@@ -13,6 +13,8 @@ namespace HttpServer
         private int _port;
         private bool _accepting = true;
 
+        public static Configuration Configuration;
+
         ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private Thread _mainThread;
@@ -21,14 +23,12 @@ namespace HttpServer
 
         public ServerClass(int port)
         {
+            Configuration = new Configuration("../../../Configuration.xml");
             _port = port;
         }
 
         public void Start()
         {
-            Configuration config = new Configuration("../../../configuration.xml");
-            Console.WriteLine(config.RootPath);
-
             _mainThread = Thread.CurrentThread;
             log4net.Config.XmlConfigurator.Configure();
 

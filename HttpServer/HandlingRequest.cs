@@ -34,7 +34,34 @@ namespace HttpServer
         public static HttpResponse ProcessRequest(HttpRequest request)
         {
             string filePath = HttpService.RootCatalog + request.Filename;
+            string indexPath = HttpService.RootCatalog + "/index.html";
             FileAttributes attr;
+            FileStream fileStream;
+            long contentLength;
+
+            if (request.Filename.Equals("/"))
+            {
+                try
+                {
+                    fileStream = new FileStream(indexPath, FileMode.Open);
+                    FileInfo info = new FileInfo(indexPath);
+                    contentLength = info.Length;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    return _response404;
+                }
+                catch (FileNotFoundException)
+                {
+                    return _response404;
+                }
+                catch (ArgumentException)
+                {
+                    return _response404;
+                }
+
+                return ReturnFile(fileStream, indexPath, contentLength);
+            }
 
             try
             {
@@ -63,8 +90,6 @@ namespace HttpServer
                 return ReturnDirectory(contents, filePath);
             }
 
-            FileStream fileStream;
-            long contentLength;
             try
             {
                 fileStream = new FileStream(filePath, FileMode.Open);

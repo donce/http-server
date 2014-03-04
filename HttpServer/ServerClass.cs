@@ -11,6 +11,7 @@ namespace HttpServer
         private int _port;
         private static bool _accepting = true;
 
+
         public void Start(int port)
         {
             log4net.Config.XmlConfigurator.Configure();
@@ -38,6 +39,11 @@ namespace HttpServer
                 Task.Run(action);
                 log.Info("Response sent");
             }
+        }
+
+        public void Stop()
+        {
+
         }
         //TODO:Stop method
     }

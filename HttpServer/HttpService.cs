@@ -13,7 +13,6 @@ namespace HttpServer
         private TcpClient client;
 
         private Stream stream;
-        private StreamReader reader;
         private StreamWriter writer;
 
         private static readonly IDictionary<string, string> contentTypes;
@@ -40,7 +39,6 @@ namespace HttpServer
                 throw new ArgumentNullException("client");
             this.client = client;
             stream = client.GetStream();
-            reader = new StreamReader(stream);
             writer = new StreamWriter(stream);
         }
 
@@ -50,27 +48,18 @@ namespace HttpServer
             {
                 Console.WriteLine("Client connected");
 
-                String[] lines = ReadRequest();
-                if (lines.Length == 0)
-                {
-                    Write400();
-                    return;
-                }
-                foreach (string line in lines)
-                {
-                    Console.WriteLine(line);
-                }
-
+                ReadingRequest reading = new ReadingRequest(stream);
                 HttpRequest request;
                 try
                 {
-                    request = new HttpRequest(lines[0]);
+                    request = reading.Read();
                 }
-                catch (ArgumentException)
+                catch (BadRequestException)
                 {
                     Write400();
                     return;
                 }
+
 
                 string filename = RootCatalog + request.Filename;
 
@@ -83,11 +72,11 @@ namespace HttpServer
                     fileStream = new FileStream(filename, FileMode.Open);
                     FileInfo info = new FileInfo(filename);
                     contentLength = info.Length;
-            }
-            catch (ArgumentException)
-            {
-                Write404();
-                return;
+                }
+                catch (ArgumentException)
+                {
+                    Write404();
+                    return;
                 }
                 catch (FileNotFoundException)
                 {
@@ -99,7 +88,6 @@ namespace HttpServer
                     Write404();
                     return;
                 }
-
 
                 WriteResponse(200, "OK");
                 AddProperty("Content-Type", GetContentType(filename));
@@ -114,18 +102,6 @@ namespace HttpServer
             {
                 client.Close();
             }
-        }
-
-        private string[] ReadRequest()
-        {
-            List<string> lines = new List<string>();
-            string line = reader.ReadLine();
-            while (!String.IsNullOrEmpty(line))
-            {
-                lines.Add(line);
-                line = reader.ReadLine();
-            }
-            return lines.ToArray();
         }
 
         private static string GetContentType(string filename)

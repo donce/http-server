@@ -65,6 +65,9 @@ namespace HttpServer
                 try
                 {
                     request = new HttpRequest(lines[0]);
+//TODO:URL decoding
+//                    Console.WriteLine(DecodeUrlString(lines[0]));
+//                    request = new HttpRequest(DecodeUrlString(lines[0]));
                 }
                 catch (ArgumentException)
                 {
@@ -163,6 +166,14 @@ namespace HttpServer
             writer.WriteLine("");
             writer.WriteLine("Page not found");
             writer.Flush();
+        }
+
+        private static string DecodeUrlString(string url)
+        {
+            string newUrl;
+            while ((newUrl = Uri.UnescapeDataString(url)) != url)
+                url = newUrl;
+            return newUrl;
         }
     }
 }

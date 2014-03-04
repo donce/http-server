@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using HttpServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -11,6 +12,9 @@ namespace HttpServerUnitTests
     public class HttpServiceTest
     {
         private const string CrLf = "\r\n";
+        private const int DefaultPort = 8080;
+
+        //TODO:Start and stop server from inside the test
 
         [TestMethod]
         public void TestConstructor()

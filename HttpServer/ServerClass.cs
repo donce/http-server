@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Mime;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -43,7 +44,7 @@ namespace HttpServer
 
         public void Stop()
         {
-
+            Environment.Exit(0);
         }
         //TODO:Stop method
     }

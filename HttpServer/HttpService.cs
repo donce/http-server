@@ -53,7 +53,7 @@ namespace HttpServer
             {
                 request = reading.Read();
 //                    TODO:URL decoding
-//                    Console.WriteLine(DecodeUrlString(lines[0]));
+//                    Console.WriteLine(DecodeUrlString(reading.Read());
 //                    request = new HttpRequest(DecodeUrlString(lines[0]));
             }
             catch (BadRequestException)

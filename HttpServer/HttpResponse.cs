@@ -44,6 +44,16 @@ namespace HttpServer
                 writer.WriteLine();
                 writer.Flush();
                 Content.CopyTo(stream);
+                Content.Close();
+            }
+            else
+            {
+                if (Status == 404)
+                {
+                    writer.WriteLine();
+                    writer.WriteLine("Page not found.");
+                }
+                writer.Flush();
             }
         }
     }

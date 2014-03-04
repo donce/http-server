@@ -11,18 +11,16 @@ namespace HttpServer
         private int _port;
         private static bool _accepting = true;
 
+        ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         public void Start(int port)
         {
             log4net.Config.XmlConfigurator.Configure();
-            ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
             Console.CancelKeyPress += delegate(object sender, ConsoleCancelEventArgs e)
             {
                 e.Cancel = true;
-                Console.WriteLine("CLOSING");
-                log.Warn("Server closing");
-                _accepting = false;
+                Stop();
             };
 
             TcpListener listener = new TcpListener(port);
@@ -43,7 +41,9 @@ namespace HttpServer
 
         public void Stop()
         {
-
+            Console.WriteLine("CLOSING");
+            log.Warn("Server closing");
+            _accepting = false;
         }
         //TODO:Stop method
     }

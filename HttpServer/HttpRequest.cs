@@ -5,6 +5,9 @@ using log4net.Config;
 
 namespace HttpServer
 {
+    /// <summary>
+    /// Http request class
+    /// </summary>
     public class HttpRequest
     {
 
@@ -13,7 +16,10 @@ namespace HttpServer
         {
             GET
         };
-
+        /// <summary>
+        /// Constructor of the HttpRequest class
+        /// </summary>
+        /// <param name="line">The HTTP request string</param>
         public HttpRequest(string line)
         {
             log4net.Config.XmlConfigurator.Configure();

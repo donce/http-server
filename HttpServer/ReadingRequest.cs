@@ -7,15 +7,26 @@ using System.Threading.Tasks;
 
 namespace HttpServer
 {
+    /// <summary>
+    /// The class that reads the request headers
+    /// </summary>
     class ReadingRequest
     {
         private readonly Stream stream;
 
+        /// <summary>
+        /// The constructor of the class
+        /// </summary>
+        /// <param name="stream">Input/output stream for reading and outputting the request headers</param>
         public ReadingRequest(Stream stream)
         {
             this.stream = stream;
         }
 
+        /// <summary>
+        /// Reads the request headers
+        /// </summary>
+        /// <returns>Returns an HttpRequest object with headers</returns>
         public HttpRequest Read()
         {
             string[] lines = ReadLines();
@@ -40,6 +51,10 @@ namespace HttpServer
             return request;
         }
 
+        /// <summary>
+        /// Reads request headers line by line
+        /// </summary>
+        /// <returns>Returns an array of request header strings</returns>
         private string[] ReadLines()
         {
             StreamReader reader = new StreamReader(stream);

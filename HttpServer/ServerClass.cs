@@ -10,7 +10,6 @@ namespace HttpServer
 {
     public class ServerClass
     {
-        private int _port;
         private bool _accepting = true;
 
         public static Configuration Configuration;
@@ -21,10 +20,9 @@ namespace HttpServer
 
         private List<Task> tasks = new List<Task>();
 
-        public ServerClass(int port)
+        public ServerClass(string configurationFilename)
         {
-            Configuration = new Configuration("../../../Configuration.xml");
-            _port = port;
+            Configuration = new Configuration(configurationFilename);
         }
 
         public void Start()
@@ -38,7 +36,7 @@ namespace HttpServer
                 Stop();
             };
 
-            TcpListener listener = new TcpListener(_port);
+            TcpListener listener = new TcpListener(Configuration.Port);
             listener.Start();
             log.Info("Server has started");
 

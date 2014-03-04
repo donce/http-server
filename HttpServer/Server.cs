@@ -4,12 +4,12 @@ namespace HttpServer
     
     public class Server
     {
-        public const int DefaultPort = 8080;
         public static bool accepting = true;
+        public static string configurationFilename = "../../../Configuration.xml";
 
         static void Main(string[] args)
         {
-            ServerClass server = new ServerClass(DefaultPort);//TODO:port in config file
+            ServerClass server = new ServerClass(configurationFilename);
             server.Start();
         }
     }

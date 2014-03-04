@@ -1,1 +1,4 @@
-<root>C:\www</root>
+<configuration>
+	<root>C:\www</root>
+	<port>8080</port>
+</configuration>

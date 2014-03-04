@@ -12,14 +12,16 @@ namespace HttpServerUnitTests
     public class HttpServiceTest
     {
         private const string CrLf = "\r\n";
-        private const int DefaultPort = 8080;
         private static ServerClass _server;
+
+        private static Configuration _configuration;
 
         [ClassInitialize]
         public static void StartServer(TestContext context)
         {
-            _server = new ServerClass();
-            Task.Factory.StartNew(() => _server.Start(DefaultPort));
+            _configuration = new Configuration(Server.configurationFilename);
+            _server = new ServerClass(Server.configurationFilename);
+            Task.Factory.StartNew(() => _server.Start());
         }
 
         [TestMethod]
@@ -85,7 +87,7 @@ namespace HttpServerUnitTests
 
         private static String GetFirstLine(String request)
         {
-            TcpClient client = new TcpClient("localhost", Server.DefaultPort);
+            TcpClient client = new TcpClient("localhost", _configuration.Port);
             NetworkStream networkStream = client.GetStream();
 
             StreamWriter toServer = new StreamWriter(networkStream, Encoding.UTF8);

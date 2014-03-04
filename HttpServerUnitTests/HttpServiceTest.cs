@@ -66,7 +66,7 @@ namespace HttpServerUnitTests
         [TestMethod]
         public void TestGetIllegalProtocol()
         {
-            String line = GetFirstLine("GET /file.txt HTTP/1.2");
+            String line = GetFirstLine("GET /file.txt HTTP/0.9");
             Assert.AreEqual("HTTP/1.0 400 Illegal protocol", line);
         }
 
@@ -74,7 +74,7 @@ namespace HttpServerUnitTests
         public void TestMethodNotImplemented()
         {
             String line = GetFirstLine("POST /file.txt HTTP/1.0");
-            Assert.AreEqual("HTTP/1.0 200 xxx", line);
+            Assert.AreEqual("HTTP/1.0 400 Illegal request", line);
         }
 
         [ClassCleanup]

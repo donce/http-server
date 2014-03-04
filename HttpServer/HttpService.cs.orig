@@ -52,10 +52,14 @@ namespace HttpServer
                 HttpRequest request;
                 try
                 {
-                    request = reading.Read();
+<<<<<<< HEAD
+                    request = new HttpRequest(lines[0]);
 //TODO:URL decoding
 //                    Console.WriteLine(DecodeUrlString(lines[0]));
 //                    request = new HttpRequest(DecodeUrlString(lines[0]));
+=======
+                    request = reading.Read();
+>>>>>>> bb86e05e828b830e564eff0b4ddf0371e7e31f5a
                 }
                 catch (BadRequestException)
                 {

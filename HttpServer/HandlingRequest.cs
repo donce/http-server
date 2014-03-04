@@ -10,7 +10,6 @@ namespace HttpServer
     public class HandlingRequest
     {
         private static readonly IDictionary<string, string> contentTypes;
-        private const string defaultContentType = "application/octet-stream";
 
         private static readonly HttpResponse _response404;
 
@@ -133,7 +132,7 @@ namespace HttpServer
             string extension = Path.GetExtension(filename).Substring(1);
             if (contentTypes.ContainsKey(extension))
                 return contentTypes[extension];
-            return defaultContentType;
+            return ServerClass.Configuration.DefaultContentType;
         }
 
         /// <summary>

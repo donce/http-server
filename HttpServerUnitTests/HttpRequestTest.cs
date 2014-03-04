@@ -1,0 +1,74 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using HttpServer;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace HttpServerUnitTests
+{
+    [TestClass]
+    public class HttpRequestTest
+    {
+
+        [TestMethod]
+        public void TestConstructor()
+        {
+            HttpRequest request = new HttpRequest("GET /file.txt HTTP/1.0");
+            Assert.AreEqual(request.Method, HttpRequest.Methods.GET);
+            Assert.AreEqual(request.Filename, "/file.txt");
+            Assert.AreEqual(request.Protocol, "HTTP/1.0");
+            
+            try
+            {
+                new HttpRequest(null);
+                Assert.Fail();
+            }
+            catch (ArgumentNullException) { }
+
+            try
+            {
+                new HttpRequest("");
+                Assert.Fail();
+            }
+            catch (ArgumentException) { }
+
+            try
+            {
+                new HttpRequest("  ");
+                Assert.Fail();
+            }
+            catch (ArgumentException) { }
+
+            try
+            {
+                new HttpRequest("XXX");
+                Assert.Fail();
+            }
+            catch (ArgumentException) { }
+
+            try
+            {
+                new HttpRequest("XXX / HTTP/1.0");
+                Assert.Fail();
+            }
+            catch (MethodException) { }
+
+            try
+            {
+                new HttpRequest("GET / XXXX/1.0");
+                Assert.Fail();
+            }
+            catch (ProtocolException) { }
+
+            try
+            {
+                new HttpRequest("GET / HTTP/0.9");
+                Assert.Fail();
+            }
+            catch (ProtocolException) { }
+        }
+
+    }
+}

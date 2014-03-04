@@ -16,14 +16,18 @@ namespace HttpServer
         {
             GET
         };
-        public readonly Methods Method;
-        public readonly string Filename;
-        public readonly string Protocol;
-
+<<<<<<< HEAD
         /// <summary>
         /// Constructor of the HttpRequest class
         /// </summary>
         /// <param name="line">The HTTP request string</param>
+=======
+
+        public readonly Methods Method;
+        public readonly string Filename;
+        public readonly string Protocol;
+
+>>>>>>> 5e493424adc5c55dfc499f52bb530b549e93b763
         public HttpRequest(string line)
         {
             log4net.Config.XmlConfigurator.Configure();

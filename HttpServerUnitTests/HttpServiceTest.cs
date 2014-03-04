@@ -13,8 +13,14 @@ namespace HttpServerUnitTests
     {
         private const string CrLf = "\r\n";
         private const int DefaultPort = 8080;
+        private static ServerClass _server;
 
-        //TODO:Start and stop server from inside the test
+        [ClassInitialize]
+        public static void StartServer(TestContext context)
+        {
+            _server = new ServerClass();
+            Task.Factory.StartNew(() => _server.Start(DefaultPort));
+        }
 
         [TestMethod]
         public void TestConstructor()
@@ -40,6 +46,9 @@ namespace HttpServerUnitTests
             Assert.AreEqual("HTTP/1.0 404 Not Found", line);
         }
 
+
+
+
         [TestMethod]
         public void TestGetIllegalRequest()
         {
@@ -57,7 +66,7 @@ namespace HttpServerUnitTests
         [TestMethod]
         public void TestGetIllegalProtocol()
         {
-            String line = GetFirstLine("GET /file.txt HTTP/1.2");
+            String line = GetFirstLine("GET /file.txt HTTP/0.9");
             Assert.AreEqual("HTTP/1.0 400 Illegal protocol", line);
         }
 
@@ -65,7 +74,13 @@ namespace HttpServerUnitTests
         public void TestMethodNotImplemented()
         {
             String line = GetFirstLine("POST /file.txt HTTP/1.0");
-            Assert.AreEqual("HTTP/1.0 200 xxx", line);
+            Assert.AreEqual("HTTP/1.0 400 Illegal request", line);
+        }
+
+        [ClassCleanup]
+        public static void StopServer()
+        {
+            _server.Stop();
         }
 
         private static String GetFirstLine(String request)

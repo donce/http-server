@@ -8,7 +8,7 @@ using log4net;
 
 namespace HttpServer
 {
-    class ServerClass
+    public class ServerClass
     {
         private int _port;
         private bool _accepting = true;

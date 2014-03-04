@@ -37,11 +37,27 @@ namespace HttpServer
             bool _isDirectory = false;
             FileStream fileStream;
             long contentLength;
+            FileAttributes attr = new FileAttributes();
 
-            FileAttributes attr = File.GetAttributes(FilePath);
+            try
+            {
+                attr = File.GetAttributes(FilePath);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return _response404;
+            }
+            catch (FileNotFoundException)
+            {
+                return _response404;
+            }
+            catch (ArgumentException)
+            {
+                return _response404;
+            }
+
             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                _isDirectory = true;
                 string[] files = Directory.GetFiles(FilePath);
                 string[] directories = Directory.GetDirectories(FilePath);
                 string[] contents = new string[files.Length + directories.Length];
@@ -136,16 +152,16 @@ namespace HttpServer
             html.WriteLine(
                 @"<html>
                       <head>
-                          <title>Index of " + filePath + @"</title>
+                          <title>Index of /" + filePath.Split('/')[filePath.Split('/').Length - 2] + @"</title>
                           <style type=""text/css""></style>
                       </head>
                       <body>
-                          <h1>Index of " + filePath + @"</h1>
+                          <h1>Index of /" + filePath.Split('/')[filePath.Split('/').Length - 2] + @"</h1>
                           <pre>
                               <hr>");
             foreach (string item in contents)
             {
-                html.WriteLine("<a href=\"#" + item + "\"" + ">" + item + "</a>");
+                html.WriteLine("<a href=\"" + filePath + item + "\"" + ">" + item + "</a>");
             }
             html.WriteLine(
                 @"        </pre>

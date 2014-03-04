@@ -41,6 +41,10 @@ namespace HttpServer
             {
                 return new HttpResponse(400, "Illegal request");
             }
+            catch (MethodException)
+            {
+                return new HttpResponse(400, "Illegal request");
+            }
 
             return HandlingRequest.ProcessRequest(request);
 

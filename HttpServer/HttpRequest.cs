@@ -21,7 +21,9 @@ namespace HttpServer
         public HttpRequest(string line)
         {
             log4net.Config.XmlConfigurator.Configure();
-            if (String.IsNullOrEmpty(line))
+            if (line == null)
+                throw new ArgumentNullException();
+            if (String.IsNullOrWhiteSpace(line))
                 throw new ArgumentException();
             string[] requestWords = line.Split(' ');
             if (requestWords.Length != 3)

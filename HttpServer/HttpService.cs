@@ -92,7 +92,7 @@ namespace HttpServer
                 WriteResponse(200, "OK");
                 AddProperty("Content-Type", GetContentType(filename));
                 AddProperty("Content-Length", contentLength);
-                AddProperty("Server", "Best HTTP server ever.");
+                AddProperty("Server", "BestServer.");
                 writer.WriteLine("");
                 writer.Flush();
                 fileStream.CopyTo(stream);

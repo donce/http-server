@@ -9,9 +9,11 @@ namespace HttpServer
     {
         public readonly string RootPath = "C:\\www";
         public readonly int Port = 8080;
+        public readonly string DefaultContentType = "application/octet-stream";
 
         private const string ROOT_NAME = "root";
         private const string PORT_NAME = "port";
+        private const string DEFAULT_CONTENT_TYPE = "default-content-type";
 
         public Configuration(string filename)
         {
@@ -22,6 +24,8 @@ namespace HttpServer
                 RootPath = dict[ROOT_NAME];
             if (dict.ContainsKey(PORT_NAME))
                 Port = Convert.ToInt32(dict[PORT_NAME]);
+            if (dict.ContainsKey(DEFAULT_CONTENT_TYPE))
+                DefaultContentType = dict[DEFAULT_CONTENT_TYPE];
         }
 
         private IDictionary<string, string> LoadConfigurationXml(string filename)

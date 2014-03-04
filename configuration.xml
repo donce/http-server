@@ -1,4 +1,5 @@
 <configuration>
 	<root>C:\www</root>
 	<port>8080</port>
+	<default-content-type>application/octet-stream</default-content-type>
 </configuration>

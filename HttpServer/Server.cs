@@ -9,8 +9,8 @@ namespace HttpServer
 
         static void Main(string[] args)
         {
-            ServerClass server = new ServerClass();
-            server.Start(DefaultPort);//TODO:port in config file
+            ServerClass server = new ServerClass(DefaultPort);//TODO:port in config file
+            server.Start();
         }
     }
 }

@@ -13,6 +13,8 @@ namespace HttpServer
         private static readonly IDictionary<string, string> contentTypes;
         private const string defaultContentType = "application/octet-stream";
 
+        private static readonly HttpResponse _response404;
+
         static HandlingRequest()
         {
             contentTypes = new Dictionary<string, string>();
@@ -27,7 +29,11 @@ namespace HttpServer
             contentTypes["css"] = "text/css";
             contentTypes["xml"] = "text/xml";
             contentTypes["jar"] = "application/x-java-archive";
+
+            _response404 = new HttpResponse(404, "Not Found");
+            _response404.Content = "Page not found.";
         }
+
 
         public static HttpResponse ProcessRequest(HttpRequest request)
         {
@@ -45,15 +51,15 @@ namespace HttpServer
             }
             catch (ArgumentException)
             {
-                return new HttpResponse(404, "Not Found");
+                return _response404;
             }
             catch (FileNotFoundException)
             {
-                return new HttpResponse(404, "Not Found");
+                return _response404;
             }
             catch (DirectoryNotFoundException)
             {
-                return new HttpResponse(404, "Not Found");
+                return _response404;
             }
 
             HttpResponse response = new HttpResponse(200, "OK");
@@ -61,7 +67,7 @@ namespace HttpServer
             response.AddProperty("Content-Length", contentLength);
             response.AddProperty("Server", "BestServer.");
 
-            response.Content = fileStream;
+            response.ContentFile = fileStream;
             return response;
         }
 

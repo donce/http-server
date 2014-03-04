@@ -75,6 +75,5 @@ namespace HttpServer
                 _accepting = false;      
             }
         }
-        //TODO:Stop method
     }
 }

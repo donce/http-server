@@ -14,7 +14,8 @@ namespace HttpServer
 
         public readonly int Status;
         public readonly string Message;
-        public Stream Content;
+        public Stream ContentFile;
+        public string Content;
 
         public HttpResponse(int status, string message)
         {
@@ -39,20 +40,21 @@ namespace HttpServer
             {
                 writer.WriteLine(pair.Key + ": " + pair.Value);
             }
-            if (Content != null)
+            if (ContentFile != null)
             {
                 writer.WriteLine();
                 writer.Flush();
-                Content.CopyTo(stream);
-                Content.Close();
+                ContentFile.CopyTo(stream);
+                ContentFile.Close();
+            }
+            else if (Content != null)
+            {
+                writer.WriteLine();
+                writer.WriteLine(Content);
+                writer.Flush();
             }
             else
             {
-                if (Status == 404)
-                {
-                    writer.WriteLine();
-                    writer.WriteLine("Page not found.");
-                }
                 writer.Flush();
             }
         }

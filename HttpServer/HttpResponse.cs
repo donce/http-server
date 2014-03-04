@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HttpServer
 {
-    class HttpResponse
+    public class HttpResponse
     {
         private IDictionary<string, string> properties = new Dictionary<string, string>();
 

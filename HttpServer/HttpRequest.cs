@@ -4,7 +4,7 @@ using log4net.Config;
 
 namespace HttpServer
 {
-    class HttpRequest
+    public class HttpRequest
     {
 
         private static  readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");

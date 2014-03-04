@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net.Cache;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HttpServer
 {
@@ -37,16 +33,67 @@ namespace HttpServer
 
         public static HttpResponse ProcessRequest(HttpRequest request)
         {
-            string filename = HttpService.RootCatalog + request.Filename;
-
+            string filePath = HttpService.RootCatalog + request.Filename;
+            string indexPath = HttpService.RootCatalog + "/index.html";
+            FileAttributes attr;
             FileStream fileStream;
-
             long contentLength;
+
+            if (request.Filename.Equals("/"))
+            {
+                try
+                {
+                    fileStream = new FileStream(indexPath, FileMode.Open);
+                    FileInfo info = new FileInfo(indexPath);
+                    contentLength = info.Length;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    return _response404;
+                }
+                catch (FileNotFoundException)
+                {
+                    return _response404;
+                }
+                catch (ArgumentException)
+                {
+                    return _response404;
+                }
+
+                return ReturnFile(fileStream, indexPath, contentLength);
+            }
 
             try
             {
-                fileStream = new FileStream(filename, FileMode.Open);
-                FileInfo info = new FileInfo(filename);
+                attr = File.GetAttributes(filePath);
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return _response404;
+            }
+            catch (FileNotFoundException)
+            {
+                return _response404;
+            }
+            catch (ArgumentException)
+            {
+                return _response404;
+            }
+
+            if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
+            {
+                string[] files = Directory.GetFiles(filePath);
+                string[] directories = Directory.GetDirectories(filePath);
+                string[] contents = new string[files.Length + directories.Length];
+                directories.CopyTo(contents, 0);
+                files.CopyTo(contents, directories.Length);
+                return ReturnDirectory(contents, filePath);
+            }
+
+            try
+            {
+                fileStream = new FileStream(filePath, FileMode.Open);
+                FileInfo info = new FileInfo(filePath);
                 contentLength = info.Length;
             }
             catch (ArgumentException)
@@ -61,14 +108,7 @@ namespace HttpServer
             {
                 return _response404;
             }
-
-            HttpResponse response = new HttpResponse(200, "OK");
-            response.AddProperty("Content-Type", GetContentType(filename));
-            response.AddProperty("Content-Length", contentLength);
-            response.AddProperty("Server", "BestServer.");
-
-            response.ContentFile = fileStream;
-            return response;
+            return ReturnFile(fileStream, filePath, contentLength);
         }
 
         private static string GetContentType(string filename)
@@ -81,6 +121,51 @@ namespace HttpServer
             return defaultContentType;
         }
 
+        public static HttpResponse ReturnDirectory(string[] contents, string filePath)
+        {
+            HttpResponse response = new HttpResponse(200, "OK");
+            response.AddProperty("Content-type", "text/html");
+            response.AddProperty("Server", "BestServer");
+            response.Content = MakeHtml(contents, filePath);
+            return response;
+        }
+
+        public static HttpResponse ReturnFile(FileStream fileStream, string filePath, long contentLength)
+        {
+            HttpResponse response = new HttpResponse(200, "OK");
+            response.AddProperty("Content-Type", GetContentType(filePath));
+            response.AddProperty("Content-Length", contentLength);
+            response.AddProperty("Server", "BestServer.");
+
+            response.ContentFile = fileStream;
+            return response;
+        }
+
+        public static string MakeHtml(string[] contents, string filePath)
+        {
+            StringWriter html = new StringWriter();
+            html.WriteLine(
+                @"<html>
+                      <head>
+                          <title>Index of /" + filePath.Split('/')[filePath.Split('/').Length - 2] + @"</title>
+                          <style type=""text/css""></style>
+                      </head>
+                      <body>
+                          <h1>Index of /" + filePath.Split('/')[filePath.Split('/').Length - 2] + @"</h1>
+                          <pre>
+                              <hr>");
+            foreach (string item in contents)
+            {
+                html.WriteLine("<a href=\"#\"" + ">" + item.Split('/')[item.Split('/').Length - 1] + "</a>");
+            }
+            html.WriteLine(
+                @"        </pre>
+                          <hr>
+                          <address>BestServer</address>
+                      </body>
+                  </html>");
+            return html.ToString();
+        }
 
     }
 }

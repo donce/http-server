@@ -33,15 +33,12 @@ namespace HttpServer
 
         public static HttpResponse ProcessRequest(HttpRequest request)
         {
-            string FilePath = HttpService.RootCatalog + request.Filename;
-            bool _isDirectory = false;
-            FileStream fileStream;
-            long contentLength;
-            FileAttributes attr = new FileAttributes();
+            string filePath = HttpService.RootCatalog + request.Filename;
+            FileAttributes attr;
 
             try
             {
-                attr = File.GetAttributes(FilePath);
+                attr = File.GetAttributes(filePath);
             }
             catch (DirectoryNotFoundException)
             {
@@ -58,62 +55,35 @@ namespace HttpServer
 
             if ((attr & FileAttributes.Directory) == FileAttributes.Directory)
             {
-                string[] files = Directory.GetFiles(FilePath);
-                string[] directories = Directory.GetDirectories(FilePath);
+                string[] files = Directory.GetFiles(filePath);
+                string[] directories = Directory.GetDirectories(filePath);
                 string[] contents = new string[files.Length + directories.Length];
                 directories.CopyTo(contents, 0);
                 files.CopyTo(contents, directories.Length);
-                return ReturnDirectory(contents, FilePath);
-            }
-            else
-            {
-                try
-                {
-                    fileStream = new FileStream(FilePath, FileMode.Open);
-                    FileInfo info = new FileInfo(FilePath);
-                    contentLength = info.Length;
-                }
-                catch (ArgumentException)
-                {
-                    return _response404;
-                }
-                catch (FileNotFoundException)
-                {
-                    return _response404;
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    return _response404;
-                }
-                return ReturnFile(fileStream, FilePath, contentLength);
+                return ReturnDirectory(contents, filePath);
             }
 
-//            try
-//            {
-//                fileStream = new FileStream(FilePath, FileMode.Open);
-//                FileInfo info = new FileInfo(FilePath);
-//                contentLength = info.Length;
-//            }
-//            catch (ArgumentException)
-//            {
-//                return _response404;
-//            }
-//            catch (FileNotFoundException)
-//            {
-//                return _response404;
-//            }
-//            catch (DirectoryNotFoundException)
-//            {
-//                return _response404;
-//            }
-//
-//            HttpResponse response = new HttpResponse(200, "OK");
-//            response.AddProperty("Content-Type", GetContentType(FilePath));
-//            response.AddProperty("Content-Length", contentLength);
-//            response.AddProperty("Server", "BestServer.");
-//
-//            response.ContentFile = fileStream;
-//            return response;
+            FileStream fileStream;
+            long contentLength;
+            try
+            {
+                fileStream = new FileStream(filePath, FileMode.Open);
+                FileInfo info = new FileInfo(filePath);
+                contentLength = info.Length;
+            }
+            catch (ArgumentException)
+            {
+                return _response404;
+            }
+            catch (FileNotFoundException)
+            {
+                return _response404;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return _response404;
+            }
+            return ReturnFile(fileStream, filePath, contentLength);
         }
 
         private static string GetContentType(string filename)
@@ -161,7 +131,7 @@ namespace HttpServer
                               <hr>");
             foreach (string item in contents)
             {
-                html.WriteLine("<a href=\"" + filePath + item + "\"" + ">" + item + "</a>");
+                html.WriteLine("<a href=\"#\"" + ">" + item.Split('/')[item.Split('/').Length - 1] + "</a>");
             }
             html.WriteLine(
                 @"        </pre>

@@ -23,6 +23,7 @@ namespace HttpServer
             contentTypes = new Dictionary<string, string>();
             contentTypes["html"] = "text/html";
             contentTypes["htm"] = "text/html";
+            contentTypes["txt"] = "text/plain";
             contentTypes["doc"] = "application/msword";
             contentTypes["png"] = "image/png";
             contentTypes["gif"] = "image/gif";

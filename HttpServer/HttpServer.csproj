@@ -52,6 +52,7 @@
     <Compile Include="SendingResponse.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

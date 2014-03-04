@@ -25,6 +25,8 @@ namespace HttpServer
 
             Method = requestWords[0];
             Filename = requestWords[1];
+            Filename = Uri.UnescapeDataString(Filename);
+            Filename = Filename.Replace('+', ' ');
             Protocol = requestWords[2];
 
             if (!Method.Equals("GET"))//TODO: use enum

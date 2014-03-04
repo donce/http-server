@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Mime;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -7,7 +6,7 @@ using log4net;
 
 namespace HttpServer
 {
-    class ServerClass
+    public class ServerClass
     {
         private int _port;
         private static bool _accepting = true;

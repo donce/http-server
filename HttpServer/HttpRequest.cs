@@ -14,6 +14,10 @@ namespace HttpServer
             GET
         };
 
+        public readonly Methods Method;
+        public readonly string Filename;
+        public readonly string Protocol;
+
         public HttpRequest(string line)
         {
             log4net.Config.XmlConfigurator.Configure();
@@ -23,17 +27,15 @@ namespace HttpServer
             if (requestWords.Length != 3)
                 throw new ArgumentException();
 
-            Method = requestWords[0];
-            Filename = requestWords[1];
-            Filename = Uri.UnescapeDataString(Filename);
-            Filename = Filename.Replace('+', ' ');
-            Protocol = requestWords[2];
-
-            if (!Method.Equals("GET"))//TODO: use enum
+            if (!Methods.TryParse(requestWords[0], out Method))
             {
                 errorLog.Error("Only GET requests are supported");
                 throw new MethodException("Only GET requests are supported", "Method");
             }
+            Filename = requestWords[1];
+            Filename = Uri.UnescapeDataString(Filename);
+            Filename = Filename.Replace('+', ' ');
+            Protocol = requestWords[2];
 
             string[] protocolWords = Protocol.Split('/');
             if (protocolWords.Length != 2)
@@ -64,9 +66,5 @@ namespace HttpServer
                 throw new ProtocolException("Invalid HTTP version format", "protocolVersion");
             }
         }
-
-        public readonly string Method;
-        public readonly string Filename;
-        public readonly string Protocol;
     }
 }

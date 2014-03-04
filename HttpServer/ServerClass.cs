@@ -26,6 +26,9 @@ namespace HttpServer
 
         public void Start()
         {
+            Configuration config = new Configuration("../../../configuration.xml");
+            Console.WriteLine(config.RootPath);
+
             _mainThread = Thread.CurrentThread;
             log4net.Config.XmlConfigurator.Configure();
 
@@ -72,7 +75,7 @@ namespace HttpServer
             {
                 Console.WriteLine("CLOSING");
                 log.Warn("Server wants to close, waiting for pending connections");
-                _accepting = false;      
+                _accepting = false;
             }
         }
     }

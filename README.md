@@ -4,6 +4,7 @@ HTTP server
 Supported protocols:
 
 * GET
+* POST
 
 Supported features:
 
@@ -19,3 +20,4 @@ Response headers:
 
 * Content-Type
 * Content-Length
+* Server

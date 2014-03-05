@@ -20,3 +20,4 @@ Response headers:
 
 * Content-Type
 * Content-Length
+* Server

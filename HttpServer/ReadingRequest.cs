@@ -46,7 +46,7 @@ namespace HttpServer
             }
             catch (ArgumentException)
             {
-                errorLog.Error("Bad request exception: " + new HttpRequest(lines));
+                errorLog.Error("Bad request exception");
                 throw new BadRequestException();
             }
 

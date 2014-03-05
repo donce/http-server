@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net.Sockets;
+using System.Reflection;
+using log4net;
 
 namespace HttpServer
 {
@@ -15,6 +17,9 @@ namespace HttpServer
 
         private Stream stream;
         private StreamWriter writer;
+
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
 
         /// <summary>
         /// Constructor of the class
@@ -34,7 +39,8 @@ namespace HttpServer
         /// <returns>Returns the handled request from the server to the client</returns>
         private HttpResponse GetResponse()
         {
-            Console.WriteLine("Client connected");
+            log4net.Config.XmlConfigurator.Configure();
+            log.Info("Client connected");
 
             ReadingRequest reading = new ReadingRequest(stream);
             HttpRequest request;
@@ -44,14 +50,17 @@ namespace HttpServer
             }
             catch (BadRequestException)
             {
+                errorLog.Error("Illegal request: " + reading.Read().Method + reading.Read().Filename + reading.Read().Protocol);
                 return new HttpResponse(400, "Illegal request");
             }
             catch (MethodException)
             {
+                errorLog.Error("Illegal method: " + reading.Read().Method);
                 return new HttpResponse(400, "Illegal request");
             }
             catch (ProtocolException)
             {
+                errorLog.Error("Illegal protocol: " + reading.Read().Protocol);
                 return new HttpResponse(400, "Illegal protocol");
             }
 

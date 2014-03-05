@@ -9,6 +9,7 @@ namespace HttpServer
 
         static void Main(string[] args)
         {
+            log4net.Config.XmlConfigurator.Configure();
             ServerClass server = new ServerClass(configurationFilename);
             server.Start();
         }

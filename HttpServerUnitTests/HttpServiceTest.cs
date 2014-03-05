@@ -48,9 +48,6 @@ namespace HttpServerUnitTests
             Assert.AreEqual("HTTP/1.0 404 Not Found", line);
         }
 
-
-
-
         [TestMethod]
         public void TestGetIllegalRequest()
         {

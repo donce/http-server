@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HttpServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -61,8 +57,11 @@ namespace HttpServerUnitTests
                 Assert.Fail();
             }
             catch (ProtocolException) { }
+        }
 
-//            HttpRequest request = new("GET /Anders+B%C3%B8rjessonl.txt HTTP/1.1")
+        [TestMethod]
+        public void TestUrlDecoding()
+        {
             Assert.AreEqual("/Anders Børjessonl.txt", new HttpRequest("GET /Anders+B%C3%B8rjessonl.txt HTTP/1.1").Filename);
         }
 

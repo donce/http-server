@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Net.Cache;
 using System.Net.Sockets;
 using System.Reflection;
 using log4net;
@@ -40,6 +41,7 @@ namespace HttpServer
         {
             log4net.Config.XmlConfigurator.Configure();
             log.Info("Client connected");
+            Console.WriteLine("Connected");
 
             ReadingRequest reading = new ReadingRequest(stream);
             HttpRequest request;
@@ -89,14 +91,14 @@ namespace HttpServer
         /// </summary>
         public void Process()
         {
+            HttpResponse response = GetResponse();
             try
             {
-                HttpResponse response = GetResponse();
                 response.Write(stream);
             }
-            finally
+            catch (IOException)
             {
-                client.Close();
+                log.Error("Error while writing response");
             }
         }
     }

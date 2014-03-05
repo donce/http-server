@@ -8,5 +8,6 @@ namespace HttpServer
 {
     public class SendingResponse
     {
+        //TODO: implement or remove
     }
 }

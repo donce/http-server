@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using log4net;
 
 namespace HttpServer
@@ -45,8 +46,6 @@ namespace HttpServer
         {
             log4net.Config.XmlConfigurator.Configure();
             FileAttributes attr;
-            FileStream fileStream;
-            long contentLength;
 
             string filePath = ServerClass.Configuration.RootPath + request.Filename;
 
@@ -80,26 +79,41 @@ namespace HttpServer
                 return ReturnDirectory(contents, filePath);
             }
 
-            try
+            FileStream fileStream = null;
+            long contentLength = 0;
+            bool opened = false;
+
+            while (!opened)
             {
-                fileStream = new FileStream(filePath, FileMode.Open);
-                FileInfo info = new FileInfo(filePath);
-                contentLength = info.Length;
-            }
-            catch (ArgumentException)
-            {
-                errorLog.Error("Illegal characters in folder or file name");
-                return _response404;
-            }
-            catch (FileNotFoundException)
-            {
-                errorLog.Error("File does not exist");
-                return _response404;
-            }
-            catch (DirectoryNotFoundException)
-            {
-                errorLog.Error("Directory does not exist");
-                return _response404;
+                fileStream = null;
+                try
+                {
+                    fileStream = new FileStream(filePath, FileMode.Open);
+                    FileInfo info = new FileInfo(filePath);
+                    contentLength = info.Length;
+                    opened = true;
+                }
+                catch (ArgumentException)
+                {
+                    errorLog.Error("Illegal characters in folder or file name");
+                    return _response404;
+                }
+                catch (FileNotFoundException)
+                {
+                    errorLog.Error("File does not exist");
+                    return _response404;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    errorLog.Error("Directory does not exist");
+                    return _response404;
+                }
+                catch (IOException e)
+                {
+                    if (fileStream != null)
+                        fileStream.Close();
+                    Thread.Sleep(100);
+                }
             }
             return ReturnFile(fileStream, filePath, contentLength);
         }

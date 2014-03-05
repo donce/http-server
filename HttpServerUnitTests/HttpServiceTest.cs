@@ -97,13 +97,13 @@ namespace HttpServerUnitTests
             int failed = 0;
 
             List<Task> actions = new List<Task>();
+            Action action = () =>
+            {
+                if (EXPECTED_RESULT != GetFirstLine(QUERY))
+                    failed++;
+            };
             for (int i = 0; i < 10; ++i)
             {
-                Action action = () =>
-                {
-                    if (EXPECTED_RESULT != GetFirstLine(QUERY))
-                        failed++;
-                };
                 actions.Add(Task.Run(action));
             }
             Task.WaitAll(actions.ToArray());

@@ -54,7 +54,7 @@ namespace HttpServer
             {
                 IDictionary<string, string> dict = ParseQuery(ReadContent(request));
                 if (dict != null)
-                    request.Arguments = dict;
+                    request.PostArguments = dict;
             }
 
             return request;

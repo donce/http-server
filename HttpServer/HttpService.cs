@@ -63,9 +63,22 @@ namespace HttpServer
                 return new HttpResponse(400, "Illegal protocol");
             }
 
-            foreach (KeyValuePair<string, string> pair in request.Arguments)
+            //TODO: log
+            if (request.GetArguments.Count > 0)
             {
-                Console.WriteLine(pair.Key + ": " + pair.Value);
+                Console.WriteLine("GET arguments:");
+                foreach (KeyValuePair<string, string> pair in request.GetArguments)
+                {
+                    Console.WriteLine(pair.Key + ": " + pair.Value);
+                }
+            }
+            if (request.PostArguments.Count > 0)
+            {
+                Console.WriteLine("POST arguments:");
+                foreach (KeyValuePair<string, string> pair in request.PostArguments)
+                {
+                    Console.WriteLine(pair.Key + ": " + pair.Value);
+                }
             }
 
             return HandlingRequest.ProcessRequest(request);

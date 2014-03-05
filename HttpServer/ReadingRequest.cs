@@ -13,6 +13,7 @@ namespace HttpServer
     class ReadingRequest
     {
         private readonly Stream stream;
+        private readonly StreamReader reader;
 
         /// <summary>
         /// The constructor of the class
@@ -21,6 +22,7 @@ namespace HttpServer
         public ReadingRequest(Stream stream)
         {
             this.stream = stream;
+            reader = new StreamReader(stream);
         }
 
         /// <summary>
@@ -44,6 +46,17 @@ namespace HttpServer
             {
                 throw new BadRequestException();
             }
+
+            if (request.Method == HttpRequest.Methods.POST)
+            {
+                request.Arguments = ReadPOSTContent(request);
+                foreach (KeyValuePair<string, string> pair in request.Arguments)
+                {
+                    Console.WriteLine(pair.Key + " -> " + pair.Value);
+                }
+                //TODO: make use of POST arguments
+            }
+
             return request;
         }
 
@@ -53,7 +66,6 @@ namespace HttpServer
         /// <returns>Returns an array of request header strings</returns>
         private string[] ReadLines()
         {
-            StreamReader reader = new StreamReader(stream);
             List<string> lines = new List<string>();
             string line = reader.ReadLine();
             while (!String.IsNullOrEmpty(line))
@@ -62,6 +74,40 @@ namespace HttpServer
                 line = reader.ReadLine();
             }
             return lines.ToArray();
+        }
+
+        private IDictionary<string, string> ReadPOSTContent(HttpRequest request)
+        {
+            IDictionary<string, string> dict = new Dictionary<string, string>();
+            foreach (string item in ReadContent(request).Split('&'))
+            {
+                int pos = item.IndexOf('=');
+                string key = item.Substring(0, pos);
+                string value = item.Substring(pos + 1);
+                dict[key] = value;
+            }
+            return dict;
+        }
+
+        private string ReadContent(HttpRequest request)
+        {
+            //TODO: Content-Length constant
+            if (!request.Headers.ContainsKey("Content-Length"))
+            {
+                return null;
+            }
+            int length;
+            try
+            {
+                length = Convert.ToInt32(request.Headers["Content-Length"]);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            char[] buffer = new char[length];
+            reader.Read(buffer, 0, length);
+            return new string(buffer);
         }
 
     }

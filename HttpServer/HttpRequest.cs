@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using log4net;
 using log4net.Config;
@@ -20,6 +22,8 @@ namespace HttpServer
         public Methods Method { get; private set; }
         public string Filename { get; private set; }
         public string Protocol { get; private set; }
+
+        public IDictionary arguments = new Dictionary<string, string>();
 
         /// <summary>
         /// Constructor of the HttpRequest class
@@ -108,7 +112,10 @@ namespace HttpServer
         /// <param name="line">Header line string</param>
         private void ParseHeaderLine(string line)
         {
-            //TODO: implement
+            int pos = line.IndexOf(':');
+            string key = line.Substring(0, pos);
+            string value = line.Substring(pos + 1).TrimStart(new char[]{' '});
+            arguments[key] = value;
         }
     }
 }

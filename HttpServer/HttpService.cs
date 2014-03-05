@@ -63,6 +63,11 @@ namespace HttpServer
                 return new HttpResponse(400, "Illegal protocol");
             }
 
+            foreach (KeyValuePair<string, string> pair in request.Arguments)
+            {
+                Console.WriteLine(pair.Key + ": " + pair.Value);
+            }
+
             return HandlingRequest.ProcessRequest(request);
         }
 

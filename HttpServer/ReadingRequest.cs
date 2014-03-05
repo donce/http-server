@@ -52,13 +52,9 @@ namespace HttpServer
 
             if (request.Method == HttpRequest.Methods.POST)
             {
-                IDictionary<string, string> dict = ReadPOSTContent(request);
+                IDictionary<string, string> dict = ParseQuery(ReadContent(request));
                 if (dict != null)
                     request.Arguments = dict;
-                foreach (KeyValuePair<string, string> pair in request.Arguments)
-                {
-                    Console.WriteLine(pair.Key + " -> " + pair.Value);
-                }
             }
 
             return request;
@@ -80,13 +76,12 @@ namespace HttpServer
             return lines.ToArray();
         }
 
-        private IDictionary<string, string> ReadPOSTContent(HttpRequest request)
+        public static IDictionary<string, string> ParseQuery(string query)
         {
-            string content = ReadContent(request);
-            if (content == null)
+            if (String.IsNullOrEmpty(query))
                 return null;
             IDictionary<string, string> dict = new Dictionary<string, string>();
-            foreach (string item in ReadContent(request).Split('&'))
+            foreach (string item in query.Split('&'))
             {
                 int pos = item.IndexOf('=');
                 string key = item.Substring(0, pos);

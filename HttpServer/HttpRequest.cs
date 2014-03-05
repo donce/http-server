@@ -78,6 +78,20 @@ namespace HttpServer
             Filename = requestWords[1];
             Filename = Uri.UnescapeDataString(Filename);
             Filename = Filename.Replace('+', ' ');
+
+            if (Method == Methods.GET)
+            {
+                int position = Filename.IndexOf('?');
+                if (position >= 0)
+                {
+                    string query = Filename.Substring(position + 1);
+                    IDictionary<string, string> dict = ReadingRequest.ParseQuery(query);
+                    if (dict != null)
+                        Arguments = dict;
+                    Filename = Filename.Substring(0, position);
+                }   
+            }
+
             if (Filename.Equals("/"))
                 Filename = INDEX_FILENAME;
 

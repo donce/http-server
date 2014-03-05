@@ -43,6 +43,7 @@ namespace HttpServer
         /// <returns></returns>
         public static HttpResponse ProcessRequest(HttpRequest request)
         {
+            log4net.Config.XmlConfigurator.Configure();
             string filePath = ServerClass.Configuration.RootPath + request.Filename;
             string indexPath = ServerClass.Configuration.RootPath + "/index.html";
             FileAttributes attr;

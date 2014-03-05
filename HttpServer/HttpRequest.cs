@@ -31,7 +31,6 @@ namespace HttpServer
         /// <param name="line">The HTTP request string</param>
         public HttpRequest(string[] lines)
         {
-            log4net.Config.XmlConfigurator.Configure();//TODO: here?
             if (lines == null)
                 throw new ArgumentNullException();
             if (lines.Length == 0)
@@ -57,6 +56,7 @@ namespace HttpServer
         /// <param name="line">HTTP request string</param>
         private void ParseRequestLine(string line)
         {
+            XmlConfigurator.Configure();
             if (String.IsNullOrWhiteSpace(line))
                 throw new ArgumentException();
             string[] requestWords = line.Split(' ');

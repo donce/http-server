@@ -40,6 +40,7 @@ namespace HttpServer
         /// <param name="value">The value of the property</param>
         public void AddProperty(string key, Object value)
         {
+            log4net.Config.XmlConfigurator.Configure();
             if (String.IsNullOrEmpty(key))
             {
                 errorLog.Error("Null key when trying to add a property");

@@ -173,7 +173,7 @@ namespace HttpServer
                               <hr>");
             foreach (string item in contents)
             {
-                html.WriteLine("<a href=\"#\"" + ">" + item.Split('/')[item.Split('/').Length - 1] + "</a>");
+                html.WriteLine("<a href=\"" + item.Split('/')[item.Split('/').Length - 1] + "\">" + item.Split('/')[item.Split('/').Length - 1] + "</a>");
             }
             html.WriteLine(
                 @"        </pre>

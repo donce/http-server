@@ -49,7 +49,6 @@ namespace HttpServer
             long contentLength;
 
             string filePath = ServerClass.Configuration.RootPath + request.Filename;
-
             try
             {
                 attr = File.GetAttributes(filePath);

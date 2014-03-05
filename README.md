@@ -4,6 +4,7 @@ HTTP server
 Supported protocols:
 
 * GET
+* POST
 
 Supported features:
 

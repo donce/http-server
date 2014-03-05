@@ -16,14 +16,16 @@ namespace HttpServer
         private static  readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
         public enum Methods
         {
-            GET
+            GET,
+            POST
         };
 
         public Methods Method { get; private set; }
         public string Filename { get; private set; }
         public string Protocol { get; private set; }
 
-        public IDictionary arguments = new Dictionary<string, string>();
+        public IDictionary<string, string> Headers = new Dictionary<string, string>();
+        public IDictionary<string, string> Arguments = new Dictionary<string, string>();
 
         /// <summary>
         /// Constructor of the HttpRequest class
@@ -115,7 +117,7 @@ namespace HttpServer
             int pos = line.IndexOf(':');
             string key = line.Substring(0, pos);
             string value = line.Substring(pos + 1).TrimStart(new char[]{' '});
-            arguments[key] = value;
+            Headers[key] = value;
         }
     }
 }

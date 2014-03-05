@@ -41,7 +41,6 @@ namespace HttpServer
         {
             log4net.Config.XmlConfigurator.Configure();
             log.Info("Client connected");
-            Console.WriteLine("Connected");
 
             ReadingRequest reading = new ReadingRequest(stream);
             HttpRequest request;

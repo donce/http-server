@@ -3,12 +3,13 @@ HTTP server
 
 Supported protocols:
 
-* GET
-* POST
+* GET (with query)
+* POST (with query)
 
 Supported features:
 
 * Multithreading
+* File handle queue
 * Configuration file
 * URL decoding
 * Logging

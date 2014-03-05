@@ -14,26 +14,44 @@ namespace HttpServer
             GET
         };
 
-        public readonly Methods Method;
-        public readonly string Filename;
-        public readonly string Protocol;
+        public Methods Method { get; private set; }
+        public string Filename { get; private set; }
+        public string Protocol { get; private set; }
 
-        public HttpRequest(string line)
+        public HttpRequest(string[] lines)
         {
-            log4net.Config.XmlConfigurator.Configure();
-            if (line == null)
+            log4net.Config.XmlConfigurator.Configure();//TODO: here?
+            if (lines == null)
                 throw new ArgumentNullException();
+            if (lines.Length == 0)
+            {
+                throw new BadRequestException();
+            }
+            ParseRequestLine(lines[0]);
+            for (int i = 1; i < lines.Length; ++i)
+                ParseHeaderLine(lines[i]);
+        }
+
+        public HttpRequest(string requestLine) : this(new[] {requestLine})
+        {
+        }
+
+        private void ParseRequestLine(string line)
+        {
             if (String.IsNullOrWhiteSpace(line))
                 throw new ArgumentException();
             string[] requestWords = line.Split(' ');
             if (requestWords.Length != 3)
                 throw new ArgumentException();
 
-            if (!Methods.TryParse(requestWords[0], out Method))
+            Methods method;
+            if (!Methods.TryParse(requestWords[0], out method))
             {
                 errorLog.Error("Only GET requests are supported");
                 throw new MethodException("Only GET requests are supported", "Method");
             }
+            Method = method;
+
             Filename = requestWords[1];
             Filename = Uri.UnescapeDataString(Filename);
             Filename = Filename.Replace('+', ' ');
@@ -67,6 +85,11 @@ namespace HttpServer
                 errorLog.Error("Invalid HTTP version format");
                 throw new ProtocolException("Invalid HTTP version format", "protocolVersion");
             }
+        }
+
+        private void ParseHeaderLine(string line)
+        {
+            //TODO: implement
         }
     }
 }

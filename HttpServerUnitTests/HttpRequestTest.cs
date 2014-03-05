@@ -16,17 +16,10 @@ namespace HttpServerUnitTests
         public void TestConstructor()
         {
             HttpRequest request = new HttpRequest("GET /file.txt HTTP/1.0");
-            Assert.AreEqual(request.Method, HttpRequest.Methods.GET);
-            Assert.AreEqual(request.Filename, "/file.txt");
-            Assert.AreEqual(request.Protocol, "HTTP/1.0");
+            Assert.AreEqual(HttpRequest.Methods.GET, request.Method);
+            Assert.AreEqual("/file.txt", request.Filename);
+            Assert.AreEqual("HTTP/1.0", request.Protocol);
             
-            try
-            {
-                new HttpRequest(null);
-                Assert.Fail();
-            }
-            catch (ArgumentNullException) { }
-
             try
             {
                 new HttpRequest("");

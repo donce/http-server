@@ -19,10 +19,6 @@ namespace HttpServer
         public HttpRequest Read()
         {
             string[] lines = ReadLines();
-            if (lines.Length == 0)
-            {
-                throw new BadRequestException();
-            }
             foreach (string line in lines)
             {
                 Console.WriteLine(line);
@@ -31,7 +27,7 @@ namespace HttpServer
             HttpRequest request;
             try
             {
-                request = new HttpRequest(lines[0]);
+                request = new HttpRequest(lines);
             }
             catch (ArgumentException)
             {

@@ -66,18 +66,18 @@ namespace HttpServer
             //TODO: log
             if (request.GetArguments.Count > 0)
             {
-                Console.WriteLine("GET arguments:");
+                log.Info("GET arguments:");
                 foreach (KeyValuePair<string, string> pair in request.GetArguments)
                 {
-                    Console.WriteLine(pair.Key + ": " + pair.Value);
+                    log.Info(pair.Key + ": " + pair.Value);
                 }
             }
             if (request.PostArguments.Count > 0)
             {
-                Console.WriteLine("POST arguments:");
+                log.Info("POST arguments:");
                 foreach (KeyValuePair<string, string> pair in request.PostArguments)
                 {
-                    Console.WriteLine(pair.Key + ": " + pair.Value);
+                    log.Info(pair.Key + ": " + pair.Value);
                 }
             }
 

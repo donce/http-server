@@ -12,8 +12,8 @@ namespace HttpServer
     /// </summary>
     public class HttpRequest
     {
+        private static readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
 
-        private static  readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
         public enum Methods
         {
             GET,
@@ -116,7 +116,7 @@ namespace HttpServer
         {
             int pos = line.IndexOf(':');
             string key = line.Substring(0, pos);
-            string value = line.Substring(pos + 1).TrimStart(new char[]{' '});
+            string value = line.Substring(pos + 1).TrimStart(new char[] {' '});
             Headers[key] = value;
         }
     }

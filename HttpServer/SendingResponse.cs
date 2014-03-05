@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HttpServer
 {
-    class SendingResponse
+    public class SendingResponse
     {
     }
 }

@@ -22,6 +22,7 @@ namespace HttpServer
         private Thread _mainThread;
 
         private List<Task> tasks = new List<Task>();
+
         /// <summary>
         /// The constructor of the server class
         /// </summary>
@@ -75,6 +76,7 @@ namespace HttpServer
                 log.Warn("Server closing");
             }
         }
+
         /// <summary>
         /// Stop the server
         /// </summary>

@@ -9,7 +9,7 @@ namespace HttpServer
     /// <summary>
     /// The class that reads the request headers
     /// </summary>
-    class ReadingRequest
+    public class ReadingRequest
     {
         private readonly Stream stream;
         private readonly StreamReader reader;
@@ -112,11 +112,9 @@ namespace HttpServer
             reader.Read(buffer, 0, length);
             return new string(buffer);
         }
-
     }
 
-    class BadRequestException : Exception
+    public class BadRequestException : Exception
     {
-        
     }
 }

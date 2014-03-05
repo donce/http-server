@@ -210,6 +210,5 @@ namespace HttpServer
                   </html>");
             return html.ToString();
         }
-
     }
 }

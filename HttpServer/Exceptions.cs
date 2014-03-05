@@ -9,6 +9,7 @@ namespace HttpServer
     public class MethodException : Exception
     {
         public string Parameter { get; private set; }
+
         /// <summary>
         /// Constructor with no parameters
         /// </summary>
@@ -16,6 +17,7 @@ namespace HttpServer
         {
             //empty
         }
+
         /// <summary>
         /// Constructor with the message parameter
         /// </summary>
@@ -24,6 +26,7 @@ namespace HttpServer
         {
             //empty
         }
+
         /// <summary>
         /// Constructor with the message and the parameter string
         /// </summary>
@@ -34,6 +37,7 @@ namespace HttpServer
             Parameter = parameter;
         }
     }
+
     /// <summary>
     /// Exception class for illegal or invalid protocols
     /// </summary>
@@ -41,6 +45,7 @@ namespace HttpServer
     public class ProtocolException : Exception
     {
         public string Parameter { get; private set; }
+
         /// <summary>
         /// Constructor with no parameters
         /// </summary>
@@ -48,6 +53,7 @@ namespace HttpServer
         {
             //empty
         }
+
         /// <summary>
         /// Constructor with the message parameter
         /// </summary>
@@ -56,6 +62,7 @@ namespace HttpServer
         {
             //empty
         }
+
         /// <summary>
         /// Constructor with the message and the parameter string
         /// </summary>

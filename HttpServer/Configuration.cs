@@ -47,7 +47,7 @@ namespace HttpServer
                             break;
                     }
                 }
-                return dict;    
+                return dict;
             }
         }
     }

@@ -16,7 +16,6 @@ namespace HttpServer
         private TcpClient client;
 
         private Stream stream;
-        private StreamWriter writer;
 
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
@@ -65,7 +64,6 @@ namespace HttpServer
             }
 
             return HandlingRequest.ProcessRequest(request);
-
         }
 
         /// <summary>

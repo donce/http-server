@@ -49,17 +49,17 @@ namespace HttpServer
             }
             catch (BadRequestException)
             {
-                errorLog.Error("Illegal request: " + reading.Read().Method + reading.Read().Filename + reading.Read().Protocol);
+                errorLog.Error("Illegal request");
                 return new HttpResponse(400, "Illegal request");
             }
             catch (MethodException)
             {
-                errorLog.Error("Illegal method: " + reading.Read().Method);
+                errorLog.Error("Illegal method");
                 return new HttpResponse(400, "Illegal request");
             }
             catch (ProtocolException)
             {
-                errorLog.Error("Illegal protocol: " + reading.Read().Protocol);
+                errorLog.Error("Illegal protocol");
                 return new HttpResponse(400, "Illegal protocol");
             }
 

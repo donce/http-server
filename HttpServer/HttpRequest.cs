@@ -98,8 +98,6 @@ namespace HttpServer
             try
             {
                 decimal protocolVersion = decimal.Parse(protocolWords[1]);
-                Console.WriteLine("Version:");
-                Console.WriteLine(protocolVersion);
                 if (protocolVersion < 1)
                 {
                     errorLog.Error("Invalid HTTP version");

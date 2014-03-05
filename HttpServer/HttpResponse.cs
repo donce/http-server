@@ -60,9 +60,9 @@ namespace HttpServer
         /// <param name="stream">The output stream</param>
         public void Write(Stream stream)
         {
+            StreamWriter writer = new StreamWriter(stream);
             try
             {
-                StreamWriter writer = new StreamWriter(stream);
                 writer.WriteLine("HTTP/1.0 " + Status.ToString() + " " + Message);
                 foreach (KeyValuePair<string, string> pair in properties)
                 {
@@ -89,6 +89,7 @@ namespace HttpServer
             {
                 if (ContentFile != null)
                     ContentFile.Close();
+                writer.Close();
             }
         }
     }

@@ -15,7 +15,7 @@ namespace HttpServer
     /// </summary>
     public class HttpResponse
     {
-        private IDictionary<string, string> properties = new Dictionary<string, string>();
+        private readonly IDictionary<string, string> properties = new Dictionary<string, string>();
         private static readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
         public readonly int Status;
         public readonly string Message;

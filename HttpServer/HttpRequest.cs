@@ -45,10 +45,18 @@ namespace HttpServer
                 ParseHeaderLine(lines[i]);
         }
 
+        /// <summary>
+        /// A constructor for the HttpRequest object
+        /// </summary>
+        /// <param name="requestLine">HTTP request string</param>
         public HttpRequest(string requestLine) : this(new[] {requestLine})
         {
         }
 
+        /// <summary>
+        /// Parses the HTTP request
+        /// </summary>
+        /// <param name="line">HTTP request string</param>
         private void ParseRequestLine(string line)
         {
             if (String.IsNullOrWhiteSpace(line))
@@ -100,6 +108,10 @@ namespace HttpServer
             }
         }
 
+        /// <summary>
+        /// Parses a header line
+        /// </summary>
+        /// <param name="line">Header line string</param>
         private void ParseHeaderLine(string line)
         {
             int pos = line.IndexOf(':');

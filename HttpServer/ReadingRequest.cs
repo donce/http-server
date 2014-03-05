@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+using log4net;
 
 namespace HttpServer
 {
@@ -14,6 +13,8 @@ namespace HttpServer
     {
         private readonly Stream stream;
         private readonly StreamReader reader;
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
 
         /// <summary>
         /// The constructor of the class
@@ -31,10 +32,11 @@ namespace HttpServer
         /// <returns>Returns an HttpRequest object with headers</returns>
         public HttpRequest Read()
         {
+            log4net.Config.XmlConfigurator.Configure();
             string[] lines = ReadLines();
             foreach (string line in lines)
             {
-                Console.WriteLine(line);
+                log.Info(line);
             }
 
             HttpRequest request;
@@ -44,6 +46,7 @@ namespace HttpServer
             }
             catch (ArgumentException)
             {
+                errorLog.Error("Bad request exception: " + new HttpRequest(lines));
                 throw new BadRequestException();
             }
 

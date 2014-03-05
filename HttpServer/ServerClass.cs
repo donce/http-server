@@ -17,7 +17,7 @@ namespace HttpServer
 
         public static Configuration Configuration;
 
-        ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         private Thread _mainThread;
 

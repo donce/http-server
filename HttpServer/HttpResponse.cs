@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace HttpServer
 {
@@ -14,7 +16,7 @@ namespace HttpServer
     public class HttpResponse
     {
         private IDictionary<string, string> properties = new Dictionary<string, string>();
-
+        private static readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
         public readonly int Status;
         public readonly string Message;
         public Stream ContentFile;
@@ -39,9 +41,15 @@ namespace HttpServer
         public void AddProperty(string key, Object value)
         {
             if (String.IsNullOrEmpty(key))
+            {
+                errorLog.Error("Null key when trying to add a property");
                 throw new ArgumentException("Null or empty", "key");
+            }
             if (String.IsNullOrEmpty(value.ToString()))
+            {
+                errorLog.Error("Null value when trying to add a property");
                 throw new ArgumentException("Null or empty", "value");
+            }
             properties[key] = value.ToString();
         }
 

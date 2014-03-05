@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using log4net;
 
 namespace HttpServer
 {
@@ -10,7 +11,7 @@ namespace HttpServer
     public class HandlingRequest
     {
         private static readonly IDictionary<string, string> contentTypes;
-
+        private static readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
         private static readonly HttpResponse _response404;
 
         /// <summary>
@@ -58,14 +59,17 @@ namespace HttpServer
                 }
                 catch (DirectoryNotFoundException)
                 {
+                    errorLog.Error("Directory does not exist");
                     return _response404;
                 }
                 catch (FileNotFoundException)
                 {
+                    errorLog.Error("File does not exist");
                     return _response404;
                 }
                 catch (ArgumentException)
                 {
+                    errorLog.Error("Illegal characters in folder or file name");
                     return _response404;
                 }
 
@@ -78,14 +82,17 @@ namespace HttpServer
             }
             catch (DirectoryNotFoundException)
             {
+                errorLog.Error("Directory does not exist");
                 return _response404;
             }
             catch (FileNotFoundException)
             {
+                errorLog.Error("File does not exist");
                 return _response404;
             }
             catch (ArgumentException)
             {
+                errorLog.Error("Illegal characters in folder or file name");
                 return _response404;
             }
 
@@ -107,14 +114,17 @@ namespace HttpServer
             }
             catch (ArgumentException)
             {
+                errorLog.Error("Illegal characters in folder or file name");
                 return _response404;
             }
             catch (FileNotFoundException)
             {
+                errorLog.Error("File does not exist");
                 return _response404;
             }
             catch (DirectoryNotFoundException)
             {
+                errorLog.Error("Directory does not exist");
                 return _response404;
             }
             return ReturnFile(fileStream, filePath, contentLength);

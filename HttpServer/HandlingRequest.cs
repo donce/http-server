@@ -4,12 +4,18 @@ using System.IO;
 
 namespace HttpServer
 {
+    /// <summary>
+    /// The class handling/parsing the HTTP request
+    /// </summary>
     public class HandlingRequest
     {
         private static readonly IDictionary<string, string> contentTypes;
 
         private static readonly HttpResponse _response404;
 
+        /// <summary>
+        /// The constructor of the class
+        /// </summary>
         static HandlingRequest()
         {
             contentTypes = new Dictionary<string, string>();
@@ -29,7 +35,11 @@ namespace HttpServer
             _response404.Content = "Page not found.";
         }
 
-
+        /// <summary>
+        /// Processes the request to be an appropriate response
+        /// </summary>
+        /// <param name="request">HTTP request</param>
+        /// <returns></returns>
         public static HttpResponse ProcessRequest(HttpRequest request)
         {
             string filePath = ServerClass.Configuration.RootPath + request.Filename;
@@ -110,6 +120,11 @@ namespace HttpServer
             return ReturnFile(fileStream, filePath, contentLength);
         }
 
+        /// <summary>
+        /// Gets the conten type of the file
+        /// </summary>
+        /// <param name="filename">The name of the file</param>
+        /// <returns></returns>
         private static string GetContentType(string filename)
         {
             if (String.IsNullOrEmpty(filename))
@@ -120,6 +135,12 @@ namespace HttpServer
             return ServerClass.Configuration.DefaultContentType;
         }
 
+        /// <summary>
+        /// Returns the content to display if the URL is a directory
+        /// </summary>
+        /// <param name="contents">Array of directory contents</param>
+        /// <param name="filePath">The file path of the directory</param>
+        /// <returns></returns>
         public static HttpResponse ReturnDirectory(string[] contents, string filePath)
         {
             HttpResponse response = new HttpResponse(200, "OK");
@@ -129,6 +150,13 @@ namespace HttpServer
             return response;
         }
 
+        /// <summary>
+        /// Returns the files content if it's of valid content type
+        /// </summary>
+        /// <param name="fileStream">The file stream for writing and outputting the file</param>
+        /// <param name="filePath">The path of the file</param>
+        /// <param name="contentLength">The content legth of the file</param>
+        /// <returns></returns>
         public static HttpResponse ReturnFile(FileStream fileStream, string filePath, long contentLength)
         {
             HttpResponse response = new HttpResponse(200, "OK");
@@ -140,6 +168,12 @@ namespace HttpServer
             return response;
         }
 
+        /// <summary>
+        /// Generate the HTML file of directory contents
+        /// </summary>
+        /// <param name="contents">Array of directories contents</param>
+        /// <param name="filePath">The file path of the directory</param>
+        /// <returns></returns>
         public static string MakeHtml(string[] contents, string filePath)
         {
             StringWriter html = new StringWriter();

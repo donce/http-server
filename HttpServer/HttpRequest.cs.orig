@@ -16,49 +16,34 @@ namespace HttpServer
         {
             GET
         };
-
-        public Methods Method { get; private set; }
-        public string Filename { get; private set; }
-        public string Protocol { get; private set; }
-
+<<<<<<< HEAD
         /// <summary>
         /// Constructor of the HttpRequest class
         /// </summary>
         /// <param name="line">The HTTP request string</param>
-        public HttpRequest(string[] lines)
+=======
+
+        public readonly Methods Method;
+        public readonly string Filename;
+        public readonly string Protocol;
+
+>>>>>>> 5e493424adc5c55dfc499f52bb530b549e93b763
+        public HttpRequest(string line)
         {
-            log4net.Config.XmlConfigurator.Configure();//TODO: here?
-            if (lines == null)
+            log4net.Config.XmlConfigurator.Configure();
+            if (line == null)
                 throw new ArgumentNullException();
-            if (lines.Length == 0)
-            {
-                throw new BadRequestException();
-            }
-            ParseRequestLine(lines[0]);
-            for (int i = 1; i < lines.Length; ++i)
-                ParseHeaderLine(lines[i]);
-        }
-
-        public HttpRequest(string requestLine) : this(new[] {requestLine})
-        {
-        }
-
-        private void ParseRequestLine(string line)
-        {
             if (String.IsNullOrWhiteSpace(line))
                 throw new ArgumentException();
             string[] requestWords = line.Split(' ');
             if (requestWords.Length != 3)
                 throw new ArgumentException();
 
-            Methods method;
-            if (!Methods.TryParse(requestWords[0], out method))
+            if (!Methods.TryParse(requestWords[0], out Method))
             {
                 errorLog.Error("Only GET requests are supported");
                 throw new MethodException("Only GET requests are supported", "Method");
             }
-            Method = method;
-
             Filename = requestWords[1];
             Filename = Uri.UnescapeDataString(Filename);
             Filename = Filename.Replace('+', ' ');
@@ -92,11 +77,6 @@ namespace HttpServer
                 errorLog.Error("Invalid HTTP version format");
                 throw new ProtocolException("Invalid HTTP version format", "protocolVersion");
             }
-        }
-
-        private void ParseHeaderLine(string line)
-        {
-            //TODO: implement
         }
     }
 }

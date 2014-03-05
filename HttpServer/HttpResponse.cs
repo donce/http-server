@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace HttpServer
 {
+    /// <summary>
+    /// The server response class
+    /// </summary>
     public class HttpResponse
     {
         private IDictionary<string, string> properties = new Dictionary<string, string>();
@@ -17,12 +20,22 @@ namespace HttpServer
         public Stream ContentFile;
         public string Content;
 
+        /// <summary>
+        /// The constructor of the class
+        /// </summary>
+        /// <param name="status">The status code of the response</param>
+        /// <param name="message">The status message</param>
         public HttpResponse(int status, string message)
         {
             Status = status;
             Message = message;
         }
 
+        /// <summary>
+        /// Adds a property(i.e. header) to the HTTP response 
+        /// </summary>
+        /// <param name="key">The key of the properties dictionary</param>
+        /// <param name="value">The value of the property</param>
         public void AddProperty(string key, Object value)
         {
             if (String.IsNullOrEmpty(key))
@@ -32,6 +45,10 @@ namespace HttpServer
             properties[key] = value.ToString();
         }
 
+        /// <summary>
+        /// Write text or the content of a file to browser output
+        /// </summary>
+        /// <param name="stream">The output stream</param>
         public void Write(Stream stream)
         {
             StreamWriter writer = new StreamWriter(stream);

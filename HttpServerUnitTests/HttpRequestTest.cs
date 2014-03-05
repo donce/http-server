@@ -61,6 +61,9 @@ namespace HttpServerUnitTests
                 Assert.Fail();
             }
             catch (ProtocolException) { }
+
+//            HttpRequest request = new("GET /Anders+B%C3%B8rjessonl.txt HTTP/1.1")
+            Assert.AreEqual("/Anders Børjessonl.txt", new HttpRequest("GET /Anders+B%C3%B8rjessonl.txt HTTP/1.1").Filename);
         }
 
     }

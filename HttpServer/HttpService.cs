@@ -6,6 +6,9 @@ using System.Net.Sockets;
 
 namespace HttpServer
 {
+    /// <summary>
+    /// Class handling the client connection to the server
+    /// </summary>
     public class HttpService
     {
         private TcpClient client;
@@ -13,7 +16,10 @@ namespace HttpServer
         private Stream stream;
         private StreamWriter writer;
 
-
+        /// <summary>
+        /// Constructor of the class
+        /// </summary>
+        /// <param name="client">The client connection</param>
         public HttpService(TcpClient client)
         {
             if (client == null)
@@ -22,6 +28,10 @@ namespace HttpServer
             stream = client.GetStream();
         }
 
+        /// <summary>
+        /// Get the server response
+        /// </summary>
+        /// <returns>Returns the handled request from the server to the client</returns>
         private HttpResponse GetResponse()
         {
             Console.WriteLine("Client connected");
@@ -49,6 +59,9 @@ namespace HttpServer
 
         }
 
+        /// <summary>
+        /// Sends the response back to the client
+        /// </summary>
         public void Process()
         {
             try
@@ -60,14 +73,6 @@ namespace HttpServer
             {
                 client.Close();
             }
-        }
-
-        private static string DecodeUrlString(string url)
-        {
-            string newUrl;
-            while ((newUrl = Uri.UnescapeDataString(url)) != url)
-                url = newUrl;
-            return newUrl;
         }
     }
 }

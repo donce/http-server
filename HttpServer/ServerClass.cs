@@ -8,6 +8,9 @@ using log4net;
 
 namespace HttpServer
 {
+    /// <summary>
+    /// The class to make the instance of the server
+    /// </summary>
     public class ServerClass
     {
         private bool _accepting = true;
@@ -19,12 +22,18 @@ namespace HttpServer
         private Thread _mainThread;
 
         private List<Task> tasks = new List<Task>();
-
+        /// <summary>
+        /// The constructor of the server class
+        /// </summary>
+        /// <param name="configurationFilename">The name of the configuration file</param>
         public ServerClass(string configurationFilename)
         {
             Configuration = new Configuration(configurationFilename);
         }
 
+        /// <summary>
+        /// Start the server
+        /// </summary>
         public void Start()
         {
             _mainThread = Thread.CurrentThread;
@@ -66,7 +75,9 @@ namespace HttpServer
                 log.Warn("Server closing");
             }
         }
-
+        /// <summary>
+        /// Stop the server
+        /// </summary>
         public void Stop()
         {
             if (_accepting)

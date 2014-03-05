@@ -44,38 +44,11 @@ namespace HttpServer
         public static HttpResponse ProcessRequest(HttpRequest request)
         {
             log4net.Config.XmlConfigurator.Configure();
-            string filePath = ServerClass.Configuration.RootPath + request.Filename;
-            string indexPath = ServerClass.Configuration.RootPath + "/index.html";
             FileAttributes attr;
             FileStream fileStream;
             long contentLength;
 
-            if (request.Filename.Equals("/"))
-            {
-                try
-                {
-                    fileStream = new FileStream(indexPath, FileMode.Open);
-                    FileInfo info = new FileInfo(indexPath);
-                    contentLength = info.Length;
-                }
-                catch (DirectoryNotFoundException)
-                {
-                    errorLog.Error("Directory does not exist");
-                    return _response404;
-                }
-                catch (FileNotFoundException)
-                {
-                    errorLog.Error("File does not exist");
-                    return _response404;
-                }
-                catch (ArgumentException)
-                {
-                    errorLog.Error("Illegal characters in folder or file name");
-                    return _response404;
-                }
-
-                return ReturnFile(fileStream, indexPath, contentLength);
-            }
+            string filePath = ServerClass.Configuration.RootPath + request.Filename;
 
             try
             {

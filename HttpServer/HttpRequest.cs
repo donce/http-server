@@ -14,6 +14,8 @@ namespace HttpServer
     {
         private static readonly ILog errorLog = LogManager.GetLogger("ErrorLogger");
 
+        private const string INDEX_FILENAME = "/index.html";
+
         public enum Methods
         {
             GET,
@@ -76,6 +78,9 @@ namespace HttpServer
             Filename = requestWords[1];
             Filename = Uri.UnescapeDataString(Filename);
             Filename = Filename.Replace('+', ' ');
+            if (Filename.Equals("/"))
+                Filename = INDEX_FILENAME;
+
             Protocol = requestWords[2];
 
             string[] protocolWords = Protocol.Split('/');

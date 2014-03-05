@@ -57,7 +57,6 @@ namespace HttpServer
                 {
                     Console.WriteLine(pair.Key + " -> " + pair.Value);
                 }
-                //TODO: make use of POST arguments
             }
 
             return request;
@@ -94,7 +93,6 @@ namespace HttpServer
 
         private string ReadContent(HttpRequest request)
         {
-            //TODO: Content-Length constant
             if (!request.Headers.ContainsKey("Content-Length"))
             {
                 return null;

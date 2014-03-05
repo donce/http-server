@@ -27,7 +27,8 @@ namespace HttpServer
         public string Protocol { get; private set; }
 
         public IDictionary<string, string> Headers = new Dictionary<string, string>();
-        public IDictionary<string, string> Arguments = new Dictionary<string, string>();
+        public IDictionary<string, string> PostArguments = new Dictionary<string, string>();
+        public IDictionary<string, string> GetArguments = new Dictionary<string, string>();
 
         /// <summary>
         /// Constructor of the HttpRequest class
@@ -78,6 +79,17 @@ namespace HttpServer
             Filename = requestWords[1];
             Filename = Uri.UnescapeDataString(Filename);
             Filename = Filename.Replace('+', ' ');
+
+            int position = Filename.IndexOf('?');
+            if (position >= 0)
+            {
+                string query = Filename.Substring(position + 1);
+                IDictionary<string, string> dict = ReadingRequest.ParseQuery(query);
+                if (dict != null)
+                    GetArguments = dict;
+                Filename = Filename.Substring(0, position);
+            }   
+
             if (Filename.Equals("/"))
                 Filename = INDEX_FILENAME;
 

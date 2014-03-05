@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using HttpServer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -84,6 +86,28 @@ namespace HttpServerUnitTests
         {
             String line = GetFirstLine("PUT /file.txt HTTP/1.0");
             Assert.AreEqual("HTTP/1.0 400 Illegal request", line);
+        }
+
+        [TestMethod]
+        public void TestMultipleFileRequests()
+        {
+            const string QUERY = "GET /image.png HTTP/1.0";
+            const string EXPECTED_RESULT = "HTTP/1.0 200 OK";
+
+            int failed = 0;
+
+            List<Task> actions = new List<Task>();
+            Action action = () =>
+            {
+                if (EXPECTED_RESULT != GetFirstLine(QUERY))
+                    failed++;
+            };
+            for (int i = 0; i < 10; ++i)
+            {
+                actions.Add(Task.Run(action));
+            }
+            Task.WaitAll(actions.ToArray());
+            Assert.AreEqual(0, failed);
         }
 
         [ClassCleanup]

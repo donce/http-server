@@ -60,28 +60,35 @@ namespace HttpServer
         /// <param name="stream">The output stream</param>
         public void Write(Stream stream)
         {
-            StreamWriter writer = new StreamWriter(stream);
-            writer.WriteLine("HTTP/1.0 " + Status.ToString() + " " + Message);
-            foreach (KeyValuePair<string, string> pair in properties)
+            try
             {
-                writer.WriteLine(pair.Key + ": " + pair.Value);
+                StreamWriter writer = new StreamWriter(stream);
+                writer.WriteLine("HTTP/1.0 " + Status.ToString() + " " + Message);
+                foreach (KeyValuePair<string, string> pair in properties)
+                {
+                    writer.WriteLine(pair.Key + ": " + pair.Value);
+                }
+                if (ContentFile != null)
+                {
+                    writer.WriteLine();
+                    writer.Flush();
+                    ContentFile.CopyTo(stream);
+                }
+                else if (Content != null)
+                {
+                    writer.WriteLine();
+                    writer.WriteLine(Content);
+                    writer.Flush();
+                }
+                else
+                {
+                    writer.Flush();
+                }
             }
-            if (ContentFile != null)
+            finally
             {
-                writer.WriteLine();
-                writer.Flush();
-                ContentFile.CopyTo(stream);
-                ContentFile.Close();
-            }
-            else if (Content != null)
-            {
-                writer.WriteLine();
-                writer.WriteLine(Content);
-                writer.Flush();
-            }
-            else
-            {
-                writer.Flush();
+                if (ContentFile != null)
+                    ContentFile.Close();
             }
         }
     }

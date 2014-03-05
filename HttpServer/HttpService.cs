@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Net.Cache;
 using System.Net.Sockets;
 using System.Reflection;
 using log4net;
@@ -63,6 +64,24 @@ namespace HttpServer
                 return new HttpResponse(400, "Illegal protocol");
             }
 
+            //TODO: log
+            if (request.GetArguments.Count > 0)
+            {
+                log.Info("GET arguments:");
+                foreach (KeyValuePair<string, string> pair in request.GetArguments)
+                {
+                    log.Info(pair.Key + ": " + pair.Value);
+                }
+            }
+            if (request.PostArguments.Count > 0)
+            {
+                log.Info("POST arguments:");
+                foreach (KeyValuePair<string, string> pair in request.PostArguments)
+                {
+                    log.Info(pair.Key + ": " + pair.Value);
+                }
+            }
+
             return HandlingRequest.ProcessRequest(request);
         }
 
@@ -71,14 +90,14 @@ namespace HttpServer
         /// </summary>
         public void Process()
         {
+            HttpResponse response = GetResponse();
             try
             {
-                HttpResponse response = GetResponse();
                 response.Write(stream);
             }
-            finally
+            catch (IOException)
             {
-                client.Close();
+                log.Error("Error while writing response");
             }
         }
     }

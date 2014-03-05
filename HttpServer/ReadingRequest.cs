@@ -52,12 +52,13 @@ namespace HttpServer
 
             if (request.Method == HttpRequest.Methods.POST)
             {
-                request.Arguments = ReadPOSTContent(request);
+                IDictionary<string, string> dict = ReadPOSTContent(request);
+                if (dict != null)
+                    request.Arguments = dict;
                 foreach (KeyValuePair<string, string> pair in request.Arguments)
                 {
                     Console.WriteLine(pair.Key + " -> " + pair.Value);
                 }
-                //TODO: make use of POST arguments
             }
 
             return request;
@@ -81,6 +82,9 @@ namespace HttpServer
 
         private IDictionary<string, string> ReadPOSTContent(HttpRequest request)
         {
+            string content = ReadContent(request);
+            if (content == null)
+                return null;
             IDictionary<string, string> dict = new Dictionary<string, string>();
             foreach (string item in ReadContent(request).Split('&'))
             {
@@ -94,7 +98,6 @@ namespace HttpServer
 
         private string ReadContent(HttpRequest request)
         {
-            //TODO: Content-Length constant
             if (!request.Headers.ContainsKey("Content-Length"))
             {
                 return null;

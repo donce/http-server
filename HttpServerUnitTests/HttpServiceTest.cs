@@ -49,6 +49,16 @@ namespace HttpServerUnitTests
         }
 
         [TestMethod]
+        public void TestPost()
+        {
+            String line = GetFirstLine("POST /file.txt HTTP/1.0");
+            Assert.AreEqual("HTTP/1.0 200 OK", line);
+
+            line = GetFirstLine("POST /fileDoesNotExist.txt HTTP/1.0");
+            Assert.AreEqual("HTTP/1.0 404 Not Found", line);
+        }
+
+        [TestMethod]
         public void TestGetIllegalRequest()
         {
             String line = GetFirstLine("GET /file.txt HTTP 1.0");
@@ -72,7 +82,7 @@ namespace HttpServerUnitTests
         [TestMethod]
         public void TestMethodNotImplemented()
         {
-            String line = GetFirstLine("POST /file.txt HTTP/1.0");
+            String line = GetFirstLine("PUT /file.txt HTTP/1.0");
             Assert.AreEqual("HTTP/1.0 400 Illegal request", line);
         }
 
